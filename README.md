@@ -1,7 +1,7 @@
-# Site de gestion de stock de livres
+# Site de gestion d'un camping
 
-Base de données pour gérer des séries littéraires.
-On y trouve les auteurs, les séries, les livres, les genres, les éditeurs
+Base de données pour gérer un campings avec les biens et les réservations.
+On y trouve les utilisateurs, les réservations, les locations, les équipements, les types de location, les disponibilités (dans la base les dates rentrées sont celles de NON disponibilité) et les prix.
 
 
 ## Pour mettre en place le projet
@@ -9,25 +9,6 @@ On y trouve les auteurs, les séries, les livres, les genres, les éditeurs
 ## Prérequis
 
 ### BIEN LIRE TOUTE LA DOCUMENTATION
-
-## 🔩 Configuration de la base de données
-
-Dans le fichier \`docker-compose.yml\`, redéfinissez les valeurs de la base de données :
-
-```yml
-services:
-  mariadb:
-    environment:
-      - MYSQL_ROOT_PASSWORD=mot_de_passe_root
-      - MYSQL_DATABASE=database_name
-      - MYSQL_USER=user_name
-      - MYSQL_PASSWORD=user_password
-```
-
-## 🔩 Configuration du fichier .htaccess
-
-Une fois votre projet monté, le point d'entrée de l'application sera dans /public/index.php :
-Récupérer le .htaccess à la racine et placé le dans le dossier public.
 
 ## 🚀 Démarrage de Docker
 
@@ -101,14 +82,6 @@ source ~/.bash_profile
 
 ## Installation du projet Symfony
 
-```bash
-ccomposer install
-```
-
-```bash
-cconsole d:m:m
-```
-
 ⚠️ **Attention** : Vérifiez votre .env avec les valeurs de vos variables d'environnement définies précédemment.
 
 ## ENJOY :)
@@ -118,32 +91,16 @@ cconsole d:m:m
 ### METHODO
 Après avoir lancé le docker, Faire :
 
-enlever le - dans le "docker-compose" (3 dans le dossier) dans aliases
-
-commenter tout le contenu du fichier assets/bootstrp.js
-
 - ccomposer install
 - ccomposer create-project symfony/skeleton:"7.3.x-dev" ./ si le www est entièrement vide
 - ccomposer require symfony/webpack-encore-bundle
-- dans webpack.config.json on va décommenter « enableSassLoader»
+
 DANS nnpm :
 - nnpm (rentrer dans le container)
 - npm install
 - npm i bootstrap
 - npm install sass-loader node-sass --save-dev
 - npm run build
-- renommer app.css en .scss
-- dans app.js on ajoute :
-    - import './bootstrap.js';
-    - import { Tooltip, Toast, Popover } from 'bootstrap';
-    - import './bootstrap';
-- dans app.js on renomme :
-    - app.css en app.scss
-- npm run build
-- on ajoute dans base.html.twig
-    		{# Librairie font awesome #}
-        <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> -->
 - puis on lance npm run watch
 
 ## POUR REMETTRE A ZERO LA BASE :
@@ -153,7 +110,7 @@ DANS nnpm :
 - cconsole d:f:l
 
 ## CREDENTIALS :
-database : livres
+database : camping
 user : admin
 mdp : admin
-port : 8082 et 3309
+port : 80 et 3306
