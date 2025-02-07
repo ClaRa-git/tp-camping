@@ -1,0 +1,22 @@
+{# Récupération de la base #}
+{% extends 'base.html.twig' %}
+
+{# On définit le titre de la page #}
+{% block title %}
+	{{title|default('Nos locations')}}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<header class="mt-4">
+			<h1 class="text-center mb-5 display-4">{{title|default('Nos locations')}}</h1>			
+		</header>
+
+		<div class="camping-grid">
+			{% for type in types %}				
+                {% include 'components/_type_card.html.twig' with {'type': type} %}
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock %}

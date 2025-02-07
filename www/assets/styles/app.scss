@@ -1,3 +1,82 @@
-body {
-    background-color: skyblue;
+@import "reset";
+
+// design de la card accueil
+.camping-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.camping-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease box-shadow 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+
+        .camping-image {
+            transform: scale(1.05);
+        }
+
+        .btn-detail {
+            opacity: 1 !important;
+        }
+    }
+
+    .camping-image {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .camping-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1rem;
+        background: $overlay-bg;
+        height: 130px;
+    }
+
+    .camping-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0 !important;
+    }
+
+    .camping-info-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .camping-price {
+            font-size: 1rem;
+            font-weight: bold;
+            color: $highlight-color;
+        }
+
+        .btn-detail {
+            background-color: $highlight-color !important;
+            color: $text-light;
+            border: none;
+            padding: 0.5rem 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease background-color 0.3s ease;
+
+            &:hover {
+                background-color: lighten($color: $highlight-color, $amount: 20%);
+                color: $primary-bg;
+            }
+        }
+
+    }
 }
