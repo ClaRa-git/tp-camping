@@ -1,18 +1,14 @@
-# Recipe Docker PHP Symfony
+# Site de gestion de stock de livres
+
+Base de données pour gérer des séries littéraires.
+On y trouve les auteurs, les séries, les livres, les genres, les éditeurs
+
+
+## Pour mettre en place le projet
 
 ## Prérequis
 
 ### BIEN LIRE TOUTE LA DOCUMENTATION
-
-- [Docker](https://docs.docker.com/engine/install/) : Installation de Docker.
-
-## Récupération du projet
-
-Clonez le dépôt Git pour récupérer le projet :
-
-```bash
-git clone git@github.com:lidem-admin-github/24_25_PREPA_CDA_SYMFONY_VIERGE.git
-```
 
 ## 🔩 Configuration de la base de données
 
@@ -23,9 +19,9 @@ services:
   mariadb:
     environment:
       - MYSQL_ROOT_PASSWORD=mot_de_passe_root
-      - MYSQL_DATABASE=nom_bdd
-      - MYSQL_USER=nom_user
-      - MYSQL_PASSWORD=mdp_user
+      - MYSQL_DATABASE=database_name
+      - MYSQL_USER=user_name
+      - MYSQL_PASSWORD=user_password
 ```
 
 ## 🔩 Configuration du fichier .htaccess
@@ -38,7 +34,7 @@ Récupérer le .htaccess à la racine et placé le dans le dossier public.
 Pour démarrer les conteneurs Docker, exécutez :
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 ## ⚙️ Configuration du fichier d'alias
@@ -116,3 +112,48 @@ cconsole d:m:m
 ⚠️ **Attention** : Vérifiez votre .env avec les valeurs de vos variables d'environnement définies précédemment.
 
 ## ENJOY :)
+
+## SI LE PROJET N'A PAS ETE CONFIGURE
+
+### METHODO
+Après avoir lancé le docker, Faire :
+
+enlever le - dans le "docker-compose" (3 dans le dossier) dans aliases
+
+commenter tout le contenu du fichier assets/bootstrp.js
+
+- ccomposer install
+- ccomposer create-project symfony/skeleton:"7.3.x-dev" ./ si le www est entièrement vide
+- ccomposer require symfony/webpack-encore-bundle
+- dans webpack.config.json on va décommenter « enableSassLoader»
+DANS nnpm :
+- nnpm (rentrer dans le container)
+- npm install
+- npm i bootstrap
+- npm install sass-loader node-sass --save-dev
+- npm run build
+- renommer app.css en .scss
+- dans app.js on ajoute :
+    - import './bootstrap.js';
+    - import { Tooltip, Toast, Popover } from 'bootstrap';
+    - import './bootstrap';
+- dans app.js on renomme :
+    - app.css en app.scss
+- npm run build
+- on ajoute dans base.html.twig
+    		{# Librairie font awesome #}
+        <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> -->
+- puis on lance npm run watch
+
+## POUR REMETTRE A ZERO LA BASE :
+- cconsole d:d:d --force
+- cconsole d:d:c
+- cconsole d:m:m
+- cconsole d:f:l
+
+## CREDENTIALS :
+database : livres
+user : admin
+mdp : admin
+port : 8082 et 3309
