@@ -18,9 +18,6 @@ class Type
     #[ORM\Column(length: 100)]
     private ?string $label = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $image = null;
-
     /**
      * @var Collection<int, Price>
      */
@@ -32,6 +29,9 @@ class Type
      */
     #[ORM\OneToMany(targetEntity: Rental::class, mappedBy: 'type')]
     private Collection $rentals;
+
+    #[ORM\Column(length: 255)]
+    private ?string $imagePath = null;
 
     public function __construct()
     {
@@ -52,18 +52,6 @@ class Type
     public function setLabel(string $label): static
     {
         $this->label = $label;
-
-        return $this;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(string $image): static
-    {
-        $this->image = $image;
 
         return $this;
     }
@@ -118,6 +106,18 @@ class Type
                 $rental->setType(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return $this->imagePath;
+    }
+
+    public function setImagePath(string $imagePath): static
+    {
+        $this->imagePath = $imagePath;
 
         return $this;
     }
