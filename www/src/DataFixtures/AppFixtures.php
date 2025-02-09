@@ -467,7 +467,8 @@ class AppFixtures extends Fixture
                 'surface' => 10,
                 'location' => 1,
                 'type' => 0,
-                'equipment' => [0, 1, 2, 3, 4]
+                'equipment' => [0, 1, 2, 3, 4],
+                'isClean' => true
             ],
             [
                 'title' => 'Emplacement nu grande taille 6 personnes',
@@ -476,7 +477,8 @@ class AppFixtures extends Fixture
                 'surface' => 15,
                 'location' => 2,
                 'type' => 1,
-                'equipment' => [0, 1, 2, 3, 4]
+                'equipment' => [0, 1, 2, 3, 4],
+                'isClean' => true
             ],
             [
                 'title' => 'Tente meublée 2 places',
@@ -485,7 +487,8 @@ class AppFixtures extends Fixture
                 'surface' => 20,
                 'location' => 3,
                 'type' => 2,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'isClean' => true
             ],
             [
                 'title' => 'Tente meublée 4 places',
@@ -494,7 +497,8 @@ class AppFixtures extends Fixture
                 'surface' => 25,
                 'location' => 4,
                 'type' => 3,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'isClean' => true
             ],
             [
                 'title' => 'Mobil-home 4 places',
@@ -503,7 +507,8 @@ class AppFixtures extends Fixture
                 'surface' => 30,
                 'location' => 5,
                 'type' => 4,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'isClean' => true
             ],
             [
                 'title' => 'Mobil-home 8 places',
@@ -512,7 +517,8 @@ class AppFixtures extends Fixture
                 'surface' => 35,
                 'location' => 6,
                 'type' => 5,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'isClean' => true
             ]
         ];
 
@@ -525,6 +531,7 @@ class AppFixtures extends Fixture
             $rental->setSurface($value['surface']);
             $rental->setLocation($value['location']);
             $rental->setType($this->getReference('type_' . $value['type']));
+            $rental->setClean($value['isClean'] ?? false);
 
             // Boucle pour ajouter les équipements aux locations
             foreach ($value['equipment'] as $equipment) {

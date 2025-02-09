@@ -52,6 +52,9 @@ class Rental
     #[ORM\OneToMany(targetEntity: Availability::class, mappedBy: 'rental')]
     private Collection $availabilities;
 
+    #[ORM\Column]
+    private ?bool $isClean = null;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -216,6 +219,18 @@ class Rental
                 $availability->setRental(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isClean(): ?bool
+    {
+        return $this->isClean;
+    }
+
+    public function setClean(bool $isClean): static
+    {
+        $this->isClean = $isClean;
 
         return $this;
     }
