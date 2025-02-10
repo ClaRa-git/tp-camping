@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edition du prix{% endblock %}
+
+{% block body %}
+    <h1>Modifier le prix</h1>
+
+    <h2>{{ price.label }}</h2>
+
+    {{ include('price/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+    <div class="action-buttons">
+        <a href="{{path('app_price_index')}}" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Retour à la liste
+        </a>
+        {{ include('price/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
