@@ -45,7 +45,7 @@ final class UserController extends AbstractController
     public function new(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user, ['is_edit' => false]);
+        $form = $this->createForm(UserType::class, $user, ['is_edit' => false, 'is_admin' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -98,13 +98,20 @@ final class UserController extends AbstractController
     #[Route('/profile/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(UserType::class, $user, ['is_edit' => true]);
+        $is_admin = in_array('ROLE_ADMIN', $this->getUser()->getRoles());
+
+        $form = $this->createForm(UserType::class, $user, ['is_edit' => true, 'is_admin' => $is_admin]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            
+            // Si l'utilisateur connecté est un admin, on redirige vers la liste des utilisateurs
+            if ($is_admin) {
+                return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            }
+            // Sinon, on redirige vers la page de profil de l'utilisateur
+            return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('user/edit.html.twig', [

@@ -1,4 +1,51 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, {'attr': {'class': 'camping-form'}}) }}
+{{ form_errors(form) }}
+
+    <div class="form-group">
+        {{ form_label(form.username) }}
+        {{ form_widget(form.username) }}
+        {{ form_errors(form.username) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.firstname) }}
+        {{ form_widget(form.firstname) }}
+        {{ form_errors(form.firstname) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.lastname) }}
+        {{ form_widget(form.lastname) }}
+        {{ form_errors(form.lastname) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.email) }}
+        {{ form_widget(form.email) }}
+        {{ form_errors(form.email) }}
+    </div>
+
+    {# Masquer le mot de passe sur la route edit #}
+    {% if app.request.attributes.get('_route') != 'app_user_edit' %}
+        <div class="form-group">
+            {{ form_label(form.plainPassword) }}
+            {{ form_widget(form.plainPassword) }}
+            {{ form_errors(form.plainPassword) }}
+        </div>
+    {% endif %}
+
+    {# Masquer si l'utilisateur qui modifie le profil est admin #}
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="form-group">
+            {{ form_label(form.roles) }}
+            {{ form_widget(form.roles) }}
+            {{ form_errors(form.roles) }}
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn-submit">
+        <i class="fas fa-save"></i>
+        {{ button_label|default('Enregistrer') }}
+    </button>
+
 {{ form_end(form) }}

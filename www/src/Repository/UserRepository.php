@@ -33,28 +33,56 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+        /**
+     * Méthode qui retourne tous les utlisateurs avec ROLE_ADMIN
+     * @return User[]
+     */
+    public function findAllAdmins(): array
+    {
+        $entityManager = $this->getEntityManager();
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'u.id',
+            'u.username',
+            'u.firstname',
+            'u.lastname',
+            'u.email',
+            'u.roles',
+        ])
+        ->from(User::class, 'u')
+        ->where('u.roles LIKE :roles')
+        ->setParameter('roles', '%ROLE_ADMIN%')
+        ->getQuery();
+        
+        return $query->getResult();
+    }
+
+    /**
+     * Méthode qui retourne tous les utlisateurs avec ROLE_USER
+     * @return User[]
+     */
+    public function findAllUsers(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'u.id',
+            'u.username',
+            'u.firstname',
+            'u.lastname',
+            'u.email',
+            'u.roles',
+        ])
+        ->from(User::class, 'u')
+        ->where('u.roles LIKE :roles')
+        ->setParameter('roles', '%ROLE_USER%')
+        ->getQuery();
+        
+        return $query->getResult();
+    }
+
 }
