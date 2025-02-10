@@ -1,0 +1,29 @@
+<h2>{{title}}</h2>
+<table class="camping-table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nom</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for equipment in equipments %}
+        <tr>
+            <td>{{ equipment.id }}</td>
+            <td>{{ equipment.label}}</td>
+            <td>
+                <div class="camping-actions">
+                    <a href="{{path('app_equipment_show', {'id': equipment.id})}}" class="view-link">Voir</a>
+                    <a href="{{path('app_equipment_edit', {'id': equipment.id})}}" class="edit-link">Editer</a>
+                </div>                    
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="4">Pas d'équipement trouvé</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+

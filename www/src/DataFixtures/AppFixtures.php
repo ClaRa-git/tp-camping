@@ -104,106 +104,40 @@ class AppFixtures extends Fixture
         // Création d'un tableau avec les équipements disponibles dans une location
         $array_equipments = [
             [
-                'label' => 'Climatisation'
+                'label' => 'Climatisation / Chauffage'
             ],
             [
-                'label' => 'Chauffage'
-            ],
-            [
-                'label' => 'Cuisine'
-            ],
-            [
-                'label' => 'Salle de bain'
+                'label' => 'Cuisine équipée'
             ],
             [
                 'label' => 'Télévision'
             ],
             [
-                'label' => 'Internet'
-            ],
-            [
                 'label' => 'Wi-Fi'
             ],
             [
-                'label' => 'Parking'
+                'label' => 'Proche Parking'
             ],
             [
-                'label' => 'Piscine'
+                'label' => 'Proche Piscine'
             ],
             [
                 'label' => 'Animaux acceptés'
             ],
             [
-                'label' => 'Fumeurs acceptés'
+                'label' => 'Salon de jardin'
             ],
             [
-                'label' => 'Non-fumeurs'
+                'label' => 'Terrasse'
             ],
             [
-                'label' => 'Lave-linge'
+                'label' => 'Place ombragée'
             ],
             [
-                'label' => 'Sèche-linge'
+                'label' => 'Borne électrique'
             ],
             [
-                'label' => 'Lave-vaisselle'
-            ],
-            [
-                'label' => 'Micro-ondes'
-            ],
-            [
-                'label' => 'Four'
-            ],
-            [
-                'label' => 'Réfrigérateur'
-            ],
-            [
-                'label' => 'Congélateur'
-            ],
-            [
-                'label' => 'Cafetière'
-            ],
-            [
-                'label' => 'Bouilloire'
-            ],
-            [
-                'label' => 'Grille-pain'
-            ],
-            [
-                'label' => 'Vaisselle'
-            ],
-            [
-                'label' => 'Ustensiles de cuisine'
-            ],
-            [
-                'label' => 'Linge de maison'
-            ],
-            [
-                'label' => 'Serviettes'
-            ],
-            [
-                'label' => 'Draps'
-            ],
-            [
-                'label' => 'Couvertures'
-            ],
-            [
-                'label' => 'Couettes'
-            ],
-            [
-                'label' => 'Oreillers'
-            ],
-            [
-                'label' => 'Lit bébé'
-            ],
-            [
-                'label' => 'Chaise bébé'
-            ],
-            [
-                'label' => 'Table à langer'
-            ],
-            [
-                'label' => 'Jouets'
+                'label' => 'Borne eau'
             ]
         ];
 
@@ -467,7 +401,7 @@ class AppFixtures extends Fixture
                 'surface' => 10,
                 'location' => 1,
                 'type' => 0,
-                'equipment' => [0, 1, 2, 3, 4],
+                'equipment' => [5, 7, 10],
                 'isClean' => true
             ],
             [
@@ -477,7 +411,7 @@ class AppFixtures extends Fixture
                 'surface' => 15,
                 'location' => 2,
                 'type' => 1,
-                'equipment' => [0, 1, 2, 3, 4],
+                'equipment' => [5, 6, 10, 11],
                 'isClean' => true
             ],
             [
@@ -487,7 +421,7 @@ class AppFixtures extends Fixture
                 'surface' => 20,
                 'location' => 3,
                 'type' => 2,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'equipment' => [5, 7, 10, 11],
                 'isClean' => true
             ],
             [
@@ -497,7 +431,17 @@ class AppFixtures extends Fixture
                 'surface' => 25,
                 'location' => 4,
                 'type' => 3,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'equipment' => [6, 7, 10, 11],
+                'isClean' => true
+            ],            
+            [
+                'title' => 'Tente meublée 4 places',
+                'description' => 'Tente meublée pour 4 personnes',
+                'bedding' => 4,
+                'surface' => 25,
+                'location' => 5,
+                'type' => 3,
+                'equipment' => [6, 7, 10, 11],
                 'isClean' => true
             ],
             [
@@ -505,9 +449,9 @@ class AppFixtures extends Fixture
                 'description' => 'Mobil-home pour 4 personnes',
                 'bedding' => 4,
                 'surface' => 30,
-                'location' => 5,
+                'location' => 6,
                 'type' => 4,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'equipment' => [0, 1, 2, 3, 6, 8],
                 'isClean' => true
             ],
             [
@@ -515,9 +459,9 @@ class AppFixtures extends Fixture
                 'description' => 'Mobil-home pour 8 personnes',
                 'bedding' => 8,
                 'surface' => 35,
-                'location' => 6,
+                'location' => 7,
                 'type' => 5,
-                'equipment' => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                'equipment' => [0, 1, 2, 3, 5, 6, 7, 8],
                 'isClean' => true
             ]
         ];
