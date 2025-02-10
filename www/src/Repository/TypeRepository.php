@@ -86,4 +86,26 @@ class TypeRepository extends ServiceEntityRepository
 
         return array_values($groupedResults);
     }
+
+    /**
+     * Méthode pour récupérer l'image d'un type pour une location
+     * @param int $typeId
+     * @return string
+     */
+    public function getImageForRental(int $typeId): string
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select('t.imagePath')
+            ->from(Type::class, 't')
+            ->where('t.id = :typeId')
+            ->setParameter('typeId', $typeId)
+            ->getQuery();
+        
+        $result = $query->getOneOrNullResult();
+
+        return $result['imagePath'];
+    }
 }

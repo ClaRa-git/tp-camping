@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle location{% endblock %}
+
+{% block body %}
+    <h1>Créer une nouvelle location</h1>
+
+    {{ include('rental/_form.html.twig') }}
+
+    <div class="action-buttons">
+        <a href="{{ path('app_rental_index') }}" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à la liste
+        </a>
+    </div>
+{% endblock %}

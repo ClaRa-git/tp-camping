@@ -1,0 +1,47 @@
+<h2>{{title}}</h2>
+
+<table class="camping-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Type de logement</th>
+                <th>Description</th>
+                <th>Nombre de lit(s)</th>
+                <th>Surface</th>
+                <th>Emplacement</th>
+                <th>Equipments</th>
+                <th>Propreté</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rental in rentals %}
+            <tr>
+                <td>{{ rental.id }}</td>
+                <td>{{ rental.title }}</td>
+                <td>{{ rental.description|slice(0,50) ~ '...' }}</td>
+                <td>{{ rental.type }}</td>
+                <td>{{ rental.bedding }}</td>
+                <td>{{ rental.surface }}</td>
+                <td>{{ rental.location }}</td>
+                <td>
+                    {% for equipment in rental.equipments %}
+                        {{equipment.equipmentLabel}}<br>                       
+                    {% endfor %}
+                </td>
+                <td>{{ rental.isClean ? 'Oui' : 'Non' }}</td>
+                <td>
+                <div class="camping-actions">
+                    <a href="{{path('app_rental_show', {'id': rental.id})}}" class="view-link">Voir</a>
+                    <a href="{{path('app_rental_edit', {'id': rental.id})}}" class="edit-link">Editer</a>
+                </div>                    
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">Pas de location</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

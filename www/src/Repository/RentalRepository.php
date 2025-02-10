@@ -16,28 +16,63 @@ class RentalRepository extends ServiceEntityRepository
         parent::__construct($registry, Rental::class);
     }
 
-    //    /**
-    //     * @return Rental[] Returns an array of Rental objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Méthode pour récupérer toutes les informations d'une location
+     * @return array
+     */
+    public function getAllInfos(): array
+    {
+        $entityManager = $this->getEntityManager();
 
-    //    public function findOneBySomeField($value): ?Rental
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'r.id',
+            'r.title',
+            'r.description',
+            'r.bedding',
+            'r.surface',
+            'r.location',
+            'r.isClean',
+            't.label as typeLabel',
+            'e.label as equipmentLabel',
+        ])
+            ->from(Rental::class, 'r')
+            ->join('r.type', 't')
+            ->join('r.equipments', 'e')
+            ->getQuery();
+        
+        $results = $query->getResult();
+
+        // On regroupe les résultats par location
+        $groupedResults = [];
+        foreach ($results as $result) {
+            $id = $result['id'];
+            if (!isset($groupedResults[$id])) {
+                $groupedResults[$id] = [
+                    'id' => $result['id'],
+                    'title' => $result['title'],
+                    'description' => $result['description'],
+                    'bedding' => $result['bedding'],
+                    'surface' => $result['surface'],
+                    'location' => $result['location'],
+                    'isClean' => $result['isClean'],
+                    'type' => $result['typeLabel'],
+                    'equipments' => [],
+                ];
+            }
+
+            // On ajoute les équipements
+            $groupedResults[$id]['equipments'][] = [
+                'equipmentLabel' => $result['equipmentLabel'],
+            ];
+        }
+
+        // On convertit l'array associatif en array indexé
+        foreach($groupedResults as &$rental) {
+            $rental['equipments'] = array_values($rental['equipments']);
+        }
+
+        return array_values($groupedResults);
+    }
 }

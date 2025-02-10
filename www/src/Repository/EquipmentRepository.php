@@ -16,28 +16,26 @@ class EquipmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Equipment::class);
     }
 
-    //    /**
-    //     * @return Equipment[] Returns an array of Equipment objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Méthode permettant de récupérer tous les équipements d'une location
+     * @param int $id
+     * @return array
+     */
+    public function getEquipmentsForRental(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
 
-    //    public function findOneBySomeField($value): ?Equipment
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'e.label',
+        ])
+            ->from(Equipment::class, 'e')
+            ->join('e.rentals', 'r')
+            ->where('r.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+        
+        return $query->getResult();
+    }
 }

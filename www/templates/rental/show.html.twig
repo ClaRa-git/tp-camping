@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Location{% endblock %}
+
+{% block body %}
+	<div class="camping-detail-card">
+		<div class="camping-detail-image">
+			<img src="{{asset('images/types/' ~ imageType)}}" alt="{{rental.title}}">
+		</div>
+		<div class="camping-detail-content">
+			<h1 class="camping-title">{{rental.title|slice(0,60) ~ '...'}}</h1>
+            
+            <div class="camping-consoles mb-3">
+                {% for equipment in equipments %}
+                    <span class="console-badge">{{equipment.label}}</span>
+                {% endfor %}
+            </div>
+
+            <div class="camping-info-detail mb-4">
+				<div class="info-item">
+					<span class="info-label">Surface :
+					</span>
+					<span class="info-value">{{rental.surface}}</span>
+				</div>
+                <div class="info-item">
+                    <span class="info-label">Emplacement :
+                    </span>
+                    <span class="info-value">{{rental.location}}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nombre de lit(s) :
+                    </span>
+                    <span class="info-value">{{rental.bedding}}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Propreté :
+                    </span>
+                    <span class="info-value">{{rental.isClean ? 'Propre' : 'Sale'}}</span>
+                </div>
+			</div>
+			<div class="camping-synopsis mb-4">
+				<h2>description</h2>
+				<p>{{rental.description}}</p>
+            </div>	
+            <div class="action-buttons">
+                <div>
+                    {# suppression #}
+                    {% include "rental/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
+                </div>
+                <div>
+                    <a href="{{ path('app_rental_edit', {'id': rental.id}) }}" class="btn btn-edit">Editer</a>
+                </div>
+                <div>
+                    <a href="{{path('app_rental_index')}}" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i>Retour à la liste</a>
+                </div>
+            </div>
+		</div>
+    </div>
+
+{% endblock %}

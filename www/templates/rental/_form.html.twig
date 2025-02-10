@@ -1,0 +1,64 @@
+
+{{ form_start(form, {'attr': {'class': 'camping-form'}}) }}
+{{ form_errors(form) }}
+
+    <div class="form-group">
+        {{ form_label(form.title) }}
+        {{ form_widget(form.title) }}
+        {{ form_errors(form.title) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description) }}
+        {{ form_errors(form.description) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.type) }}
+        {{ form_widget(form.type) }}
+        {{ form_errors(form.type) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.bedding) }}
+        {{ form_widget(form.bedding) }}
+        {{ form_errors(form.bedding) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.surface) }}
+        {{ form_widget(form.surface) }}
+        {{ form_errors(form.surface) }}
+
+    <div class="form-group">
+        {{ form_label(form.location) }}
+        {{ form_widget(form.location) }}
+        {{ form_errors(form.location) }}
+    </div>
+
+    <div class="form-group">
+        {{form_label(form.equipments)}}
+        <div class="console-switches">
+            {% for equipment in form.equipments %}
+                <div class="form-switch">
+                    {{form_widget(equipment, {'attr': {'class': 'form-check-input'}})}}
+                    {{form_label(equipment, null, {'attr': {'class': 'form-check-label'}})}}
+                </div>            
+            {% endfor %}
+        </div>
+        {{form_errors(form.equipments)}}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.isClean) }}
+        {{ form_widget(form.isClean) }}
+        {{ form_errors(form.isClean) }}
+    </div>
+
+    <button type="submit" class="btn-submit">
+        <i class="fas fa-save"></i>
+        {{ button_label|default('Enregistrer') }}
+    </button>
+
+{{ form_end(form) }}
