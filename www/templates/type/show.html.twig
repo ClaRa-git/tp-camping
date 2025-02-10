@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Série{% endblock %}
+
+{% block body %}
+    <div class="camping-detail-card">
+        <div class="camping-detail-image">
+			<img src="{{asset('images/types/' ~ type.imagePath)}}" alt="{{type.label}}">
+		</div>
+        <div class="camping-detail-content">
+            <h1 class="camping-title">{{type.label|slice(0,30)}}</h1>
+            <div class="camping-info-detail mb-4">
+                <div class="info-item">
+                    <span class="info-label">Nom : </span>
+                    </span>
+                    <span class="info-value">{{type.label}}</span>
+                </div>
+            </div>
+
+            <div class="camping-info-detail mb-4">
+                <div class="info-item">
+                    <span class="info-label">Prix : </span>
+                    {% for price in prices %}
+                        <span class="info-value">{{price.label}} : {{(price.price/100)|number_format}}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <div>
+                    {# suppression #}
+                    {% include "type/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
+                </div>
+                <div>
+                    <a href="{{ path('app_type_edit', {'id': type.id}) }}" class="btn btn-edit">Editer</a>
+                </div>
+                <div>
+                    <a href="{{path('app_type_index')}}" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i>Retour à la liste</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+{% endblock %}

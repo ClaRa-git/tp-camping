@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvel équipement{% endblock %}
+{% block title %}Nouveau type{% endblock %}
 
 {% block body %}
-    <h1>Créer un nouvel équipement</h1>
+    <h1>Créer un nouveau type</h1>
 
-    {{ include('equipment/_form.html.twig') }}
+    {{ include('type/_form.html.twig') }}
 
     <div class="action-buttons">
-        <a href="{{ path('app_equipment_index') }}" class="btn btn-back">
+        <a href="{{ path('app_type_index') }}" class="btn btn-back">
                     <i class="fas fa-arrow-left"></i>
                     Retour à la liste
         </a>

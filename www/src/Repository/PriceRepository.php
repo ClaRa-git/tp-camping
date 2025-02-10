@@ -16,28 +16,24 @@ class PriceRepository extends ServiceEntityRepository
         parent::__construct($registry, Price::class);
     }
 
-    //    /**
-    //     * @return Price[] Returns an array of Price objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Méthode permettant de récupérer le prix d'un type de logement
+     * @param int $typeId
+     * @return array
+     */
+    public function getPriceByType(int $typeId): array
+    {
+        $entityManager = $this->getEntityManager();
 
-    //    public function findOneBySomeField($value): ?Price
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select('p')
+        ->from(Price::class, 'p')
+        ->join('p.types', 't')
+        ->where('t.id = :typeId')
+        ->setParameter('typeId', $typeId)
+        ->getQuery();
+
+        return $query->getResult();
+    }
 }

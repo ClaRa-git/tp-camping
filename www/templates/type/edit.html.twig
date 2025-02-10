@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edition du type de logement{% endblock %}
+
+{% block body %}
+    <h1>Modifier le type de logement</h1>
+
+    <h2>{{ type.label }}</h2>
+
+    {{ include('type/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+    <div class="action-buttons">
+        <a href="{{path('app_type_index')}}" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Retour à la liste
+        </a>
+        {{ include('type/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
