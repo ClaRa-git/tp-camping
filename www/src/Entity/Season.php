@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SeasonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SeasonRepository::class)]
@@ -22,13 +23,19 @@ class Season
     private ?bool $isClosed = null;
 
     #[ORM\Column]
-    private ?int $pourcentage = null;
+    private ?int $percentage = null;
 
     /**
      * @var Collection<int, Price>
      */
     #[ORM\OneToMany(targetEntity: Price::class, mappedBy: 'season')]
     private Collection $prices;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateStart = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateEnd = null;
 
     public function __construct()
     {
@@ -64,14 +71,14 @@ class Season
         return $this;
     }
 
-    public function getPourcentage(): ?int
+    public function getPercentage(): ?int
     {
-        return $this->pourcentage;
+        return $this->percentage;
     }
 
-    public function setPourcentage(int $pourcentage): static
+    public function setPercentage(int $percentage): static
     {
-        $this->pourcentage = $pourcentage;
+        $this->percentage = $percentage;
 
         return $this;
     }
@@ -102,6 +109,30 @@ class Season
                 $price->setSeason(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateStart(): ?\DateTimeInterface
+    {
+        return $this->dateStart;
+    }
+
+    public function setDateStart(\DateTimeInterface $dateStart): static
+    {
+        $this->dateStart = $dateStart;
+
+        return $this;
+    }
+
+    public function getDateEnd(): ?\DateTimeInterface
+    {
+        return $this->dateEnd;
+    }
+
+    public function setDateEnd(\DateTimeInterface $dateEnd): static
+    {
+        $this->dateEnd = $dateEnd;
 
         return $this;
     }

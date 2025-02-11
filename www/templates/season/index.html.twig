@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Index saison{% endblock %}
+
+{% block body %}
+    <div class="camping-list-container">
+
+        {% include "components/_dashboard_button.html.twig" %}
+
+        <h1>Gestion des saisons</h1>
+        <a href="{{path('app_season_new')}}" class="add-camping-btn">Ajouter une saison</a>
+
+        {% include "/components/_table_season.html.twig" with {
+            'title': 'Saisons',
+            'seasons': seasons
+        } %}
+
+        <a href="{{path('app_season_new')}}" class="add-camping-btn">Ajouter une saison</a>
+
+    </div>
+{% endblock %}

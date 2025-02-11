@@ -170,17 +170,30 @@ class AppFixtures extends Fixture
             [
                 'label' => 'Basse saison',
                 'isClosed' => false,
-                'pourcentage' => 10
+                'percentage' => 80,
+                'dateStart' => new \DateTime('2025-04-01'),
+                'dateEnd' => new \DateTime('2025-06-30')
             ],
             [
                 'label' => 'Haute saison',
                 'isClosed' => false,
-                'pourcentage' => 20
+                'percentage' => 120,
+                'dateStart' => new \DateTime('2025-07-01'),
+                'dateEnd' => new \DateTime('2025-08-31')
             ],
             [
                 'label' => 'Saison fermée',
                 'isClosed' => true,
-                'pourcentage' => 0
+                'percentage' => 0,
+                'dateStart' => new \DateTime('2025-01-01'),
+                'dateEnd' => new \DateTime('2025-03-31'),
+            ],
+            [
+                'label' => 'Saison fermée',
+                'isClosed' => true,
+                'percentage' => 0,
+                'dateStart' => new \DateTime('2025-10-01'),
+                'dateEnd' => new \DateTime('2025-12-31'),
             ]
         ];
 
@@ -189,7 +202,9 @@ class AppFixtures extends Fixture
             $season = new Season();
             $season->setLabel($value['label']);
             $season->setClosed($value['isClosed']);
-            $season->setPourcentage($value['pourcentage']);
+            $season->setpercentage($value['percentage']);
+            $season->setDateStart($value['dateStart']);
+            $season->setDateEnd($value['dateEnd']);
 
             // Sauvegarde de la saison
             $manager->persist($season);
