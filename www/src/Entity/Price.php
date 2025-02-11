@@ -28,6 +28,9 @@ class Price
     #[ORM\ManyToMany(targetEntity: Type::class, mappedBy: 'prices')]
     private Collection $types;
 
+    #[ORM\ManyToOne(inversedBy: 'prices')]
+    private ?Season $season = null;
+
     public function __construct()
     {
         $this->types = new ArrayCollection();
@@ -85,6 +88,18 @@ class Price
         if ($this->types->removeElement($type)) {
             $type->removePrice($this);
         }
+
+        return $this;
+    }
+
+    public function getSeason(): ?Season
+    {
+        return $this->season;
+    }
+
+    public function setSeason(?Season $season): static
+    {
+        $this->season = $season;
 
         return $this;
     }
