@@ -4,6 +4,11 @@
 		<h2 class="camping-title">{{type.label|slice(0,40)}}</h2>
 		<div class="camping-info-container">
 			<a href="#" class="btn btn-detail">Voir détail</a>
+
+			{# Si l'utilisateur est connecté #}
+			{% if app.user and not is_granted('ROLE_ADMIN') %}
+				<a href="#" class="btn btn-detail">Réserver</a>
+			{% endif %}
 		</div>
 	</div>
 </div>

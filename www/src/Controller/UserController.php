@@ -21,7 +21,7 @@ final class UserController extends AbstractController
      * @param UserRepository $userRepository
      * @return Response
      */
-    #[Route('/admin/profile', name: 'app_user_index', methods: ['GET'])]
+    #[Route('/admin/client', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
         $roleAdmin = $userRepository->findAllAdmins();
@@ -41,7 +41,7 @@ final class UserController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/admin/profile/new', name: 'app_user_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/client/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
@@ -79,7 +79,7 @@ final class UserController extends AbstractController
      * @param User $user
      * @return Response
      */
-    #[Route('/profile/{id}', name: 'app_user_show', methods: ['GET'])]
+    #[Route('/client/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
         return $this->render('user/show.html.twig', [
@@ -95,7 +95,7 @@ final class UserController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/profile/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
+    #[Route('/client/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         $is_admin = in_array('ROLE_ADMIN', $this->getUser()->getRoles());
@@ -128,7 +128,7 @@ final class UserController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('admin/profile/{id}', name: 'app_user_delete', methods: ['POST'])]
+    #[Route('admin/client/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
