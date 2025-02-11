@@ -47,9 +47,7 @@ class TypeRepository extends ServiceEntityRepository
             't.label',
             't.imagePath',
             'p.label as priceLabel',
-            'p.price',
-            'p.dateStart',
-            'p.dateEnd'
+            'p.price'
         ])
             ->from(Type::class, 't')
             ->join('t.prices', 'p')
@@ -73,9 +71,7 @@ class TypeRepository extends ServiceEntityRepository
             // On ajoute le prix au tableau des prix
             $groupedResults[$id]['prices'][] = [
                 'label' => $result['priceLabel'],
-                'price' => $result['price'],
-                'dateStart' => $result['dateStart'],
-                'dateEnd' => $result['dateEnd']
+                'price' => $result['price']
             ];
         }
 

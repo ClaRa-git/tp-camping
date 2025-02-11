@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Non disponibilité{% endblock %}
+
+{% block body %}
+	<div class="camping-detail-card">
+		<div class="camping-detail-content">
+			<h1 class="game-title">Non disponibilité n°{{availability.id}}</h1>
+
+            <div class="camping-info-detail mb-4">
+				<div class="info-item">
+					<span class="info-label">Date de début :
+					</span>
+					<span class="info-value">{{availability.dateStart|date('d/m/Y')}}</span>
+				</div>
+
+                <div class="info-item">
+					<span class="info-label">Date de fin :
+					</span>
+					<span class="info-value">{{availability.dateEnd|date('d/m/Y')}}</span>
+				</div>
+            </div>
+            <div class="camping-info-detail mb-4">
+                <div class="info-item">
+                    <span class="info-label">Location concernée :
+                    </span>
+                    <span class="info-value">{{ rental.title }}, emplacement n°{{ rental.location }}</span>
+                </div>
+			</div>
+
+            <div class="action-buttons">
+                <div>
+                    {# suppression #}
+                    {% include "availability/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
+                </div>
+                <div>
+                    <a href="{{ path('app_availability_edit', {'id': availability.id}) }}" class="btn btn-edit">Editer</a>
+                </div>
+                <div>
+                    <a href="{{path('app_availability_index')}}" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i>Retour à la liste</a>
+                </div>
+            </div>
+		</div>
+    </div>
+
+{% endblock %}

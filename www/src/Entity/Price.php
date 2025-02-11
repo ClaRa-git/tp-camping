@@ -19,12 +19,6 @@ class Price
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateStart = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateEnd = null;
-
     #[ORM\Column]
     private ?int $price = null;
 
@@ -52,30 +46,6 @@ class Price
     public function setLabel(string $label): static
     {
         $this->label = $label;
-
-        return $this;
-    }
-
-    public function getDateStart(): ?\DateTimeInterface
-    {
-        return $this->dateStart;
-    }
-
-    public function setDateStart(\DateTimeInterface $dateStart): static
-    {
-        $this->dateStart = $dateStart;
-
-        return $this;
-    }
-
-    public function getDateEnd(): ?\DateTimeInterface
-    {
-        return $this->dateEnd;
-    }
-
-    public function setDateEnd(\DateTimeInterface $dateEnd): static
-    {
-        $this->dateEnd = $dateEnd;
 
         return $this;
     }

@@ -4,8 +4,6 @@
         <tr>
             <th>Id</th>
             <th>Label</th>
-            <th>Date de début</th>
-            <th>Date de fin</th>
             <th>Prix</th>
             <th>Actions</th>
         </tr>
@@ -15,8 +13,6 @@
         <tr>
             <td>{{ price.id }}</td>
             <td>{{ price.label}}</td>
-            <td>{{ price.dateStart|date('d/m/Y') }}</td>
-            <td>{{ price.dateEnd|date('d/m/Y') }}</td>
             <td>{{ (price.price/100)|number_format }}</td>
             <td>
                 <div class="camping-actions">

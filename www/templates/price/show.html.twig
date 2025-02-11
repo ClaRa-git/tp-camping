@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Editeur{% endblock %}
+{% block title %}Prix{% endblock %}
 
 {% block body %}
     <div class="camping-detail-card">
@@ -13,14 +13,7 @@
                     </span>
                     <span class="info-value">{{price.label}}</span>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Date de début : </span>
-                    <span class="info-value">{{price.dateStart|date('d/m/Y')}}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Date de fin : </span>
-                    <span class="info-value">{{price.dateEnd|date('d/m/Y')}}</span>
-                </div>
+
                 <div class="info-item">
                     <span class="info-label">Prix : </span>
                     <span class="info-value">{{(price.price/100)|number_format}}</span>

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Non disponibilité{% endblock %}
+
+{% block body %}
+    <h1>Créer une nouvelle Non disponibilité</h1>
+
+    {{ include('availability/_form.html.twig') }}
+
+    <div class="action-buttons">
+        <a href="{{ path('app_availability_index') }}" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à la liste
+        </a>
+    </div>
+{% endblock %}

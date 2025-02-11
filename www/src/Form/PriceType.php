@@ -21,22 +21,6 @@ class PriceType extends AbstractType
                     'placeholder' => 'Label du prix',
                 ],
             ])
-            ->add('dateStart', DateTimeType::class, [
-                'label' => 'Date de début',
-                'widget' => 'single_text',
-                'attr' => [
-                    'placeholder' => 'Date de début',
-                    'class' => 'form-control'
-                ],
-            ])
-            ->add('dateEnd', DateTimeType::class, [
-                'label' => 'Date de fin',
-                'widget' => 'single_text',
-                'attr' => [
-                    'placeholder' => 'Date de fin',
-                    'class' => 'form-control'
-                ],
-            ])
             ->add('price', IntegerType::class, [
                 'label' => 'Prix en centimes',
                 'attr' => [

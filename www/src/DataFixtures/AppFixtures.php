@@ -164,78 +164,54 @@ class AppFixtures extends Fixture
         // Création de tableaux avec les prix
         $array_prices_low_season_1 = [
             [
-                'label' => 'Prix / jour emplacement nu petite taille basse saison 1',
-                'startDate' => new \DateTime('2025-04-01'),
-                'endDate' => new \DateTime('2025-06-30'),
+                'label' => 'Prix / jour emplacement nu petite taille basse saison',
                 'price' => 1000
             ],
             [
-                'label' => 'Prix / jour emplacement grande taille basse saison 1',
-                'startDate' => new \DateTime('2025-04-01'),
-                'endDate' => new \DateTime('2025-06-30'),
+                'label' => 'Prix / jour emplacement grande taille basse saison',
                 'price' => 1500
             ],
             [
-                'label' => 'Prix / jour tente meublée 2 places basse saison 1',
-                'startDate' => new \DateTime('2025-04-01'),
-                'endDate' => new \DateTime('2025-06-30'),
+                'label' => 'Prix / jour tente meublée 2 places basse saison',
                 'price' => 2000
             ],
             [
-                'label' => 'Prix / jour tente meublée 4 places basse saison 1',
-                'startDate' => new \DateTime('2025-04-01'),
-                'endDate' => new \DateTime('2025-06-30'),
+                'label' => 'Prix / jour tente meublée 4 places basse saison',
                 'price' => 2500
             ],
             [
-                'label' => 'Prix / jour mobil-home 4 places basse saison 1',
-                'startDate' => new \DateTime('2025-04-01'),
-                'endDate' => new \DateTime('2025-06-30'),
+                'label' => 'Prix / jour mobil-home 4 places basse saison',
                 'price' => 3000
             ],
             [
-                'label' => 'Prix / jour mobil-home 8 places basse saison 1',
-                'startDate' => new \DateTime('2025-04-01'),
-                'endDate' => new \DateTime('2025-06-30'),
+                'label' => 'Prix / jour mobil-home 8 places basse saison',
                 'price' => 3500
             ]
         ];
 
         $array_prices_low_season_2 = [
             [
-                'label' => 'Prix / jour emplacement nu petite taille basse saison 2',
-                'startDate' => new \DateTime('2025-09-01'),
-                'endDate' => new \DateTime('2025-09-30'),
+                'label' => 'Prix / jour emplacement nu petite taille basse saison',
                 'price' => 1000
             ],
             [
-                'label' => 'Prix / jour emplacement grande taille basse saison 2',
-                'startDate' => new \DateTime('2025-09-01'),
-                'endDate' => new \DateTime('2025-09-30'),
+                'label' => 'Prix / jour emplacement grande taille basse saison',
                 'price' => 1500
             ],
             [
-                'label' => 'Prix / jour tente meublée 2 places basse saison 2',
-                'startDate' => new \DateTime('2025-09-01'),
-                'endDate' => new \DateTime('2025-09-30'),
+                'label' => 'Prix / jour tente meublée 2 places basse saison',
                 'price' => 2000
             ],
             [
-                'label' => 'Prix / jour tente meublée 4 places basse saison 2',
-                'startDate' => new \DateTime('2025-09-01'),
-                'endDate' => new \DateTime('2025-09-30'),
+                'label' => 'Prix / jour tente meublée 4 places basse saison',
                 'price' => 2500
             ],
             [
-                'label' => 'Prix / jour mobil-home 4 places basse saison 2',
-                'startDate' => new \DateTime('2025-09-01'),
-                'endDate' => new \DateTime('2025-09-30'),
+                'label' => 'Prix / jour mobil-home 4 places basse saison',
                 'price' => 3000
             ],
             [
-                'label' => 'Prix / jour mobil-home 8 places basse saison 2',
-                'startDate' => new \DateTime('2025-09-01'),
-                'endDate' => new \DateTime('2025-09-30'),
+                'label' => 'Prix / jour mobil-home 8 places basse saison',
                 'price' => 3500
             ]
         ];
@@ -243,38 +219,26 @@ class AppFixtures extends Fixture
         $array_prices_high_season = [
             [
                 'label' => 'Prix / jour emplacement nu petite taille haute saison',
-                'startDate' => new \DateTime('2025-07-01'),
-                'endDate' => new \DateTime('2025-08-31'),
                 'price' => 1500
             ],
             [
                 'label' => 'Prix / jour emplacement grande taille haute saison',
-                'startDate' => new \DateTime('2025-07-01'),
-                'endDate' => new \DateTime('2025-08-31'),
                 'price' => 2000
             ],
             [
                 'label' => 'Prix / jour tente meublée 2 places haute saison',
-                'startDate' => new \DateTime('2025-07-01'),
-                'endDate' => new \DateTime('2025-08-31'),
                 'price' => 2500
             ],
             [
                 'label' => 'Prix / jour tente meublée 4 places haute saison',
-                'startDate' => new \DateTime('2025-07-01'),
-                'endDate' => new \DateTime('2025-08-31'),
                 'price' => 3000
             ],
             [
                 'label' => 'Prix / jour mobil-home 4 places haute saison',
-                'startDate' => new \DateTime('2025-07-01'),
-                'endDate' => new \DateTime('2025-08-31'),
                 'price' => 3500
             ],
             [
                 'label' => 'Prix / jour mobil-home 8 places haute saison',
-                'startDate' => new \DateTime('2025-07-01'),
-                'endDate' => new \DateTime('2025-08-31'),
                 'price' => 4000
             ]
         ];
@@ -283,8 +247,6 @@ class AppFixtures extends Fixture
         foreach ($array_prices_low_season_1 as $key => $value) {
             $price = new Price();
             $price->setLabel($value['label']);
-            $price->setDateStart($value['startDate']);
-            $price->setDateEnd($value['endDate']);
             $price->setPrice($value['price']);
 
             // Sauvegarde du prix
@@ -297,8 +259,6 @@ class AppFixtures extends Fixture
         foreach ($array_prices_low_season_2 as $key => $value) {
             $price = new Price();
             $price->setLabel($value['label']);
-            $price->setDateStart($value['startDate']);
-            $price->setDateEnd($value['endDate']);
             $price->setPrice($value['price']);
 
             // Sauvegarde du prix
@@ -311,8 +271,6 @@ class AppFixtures extends Fixture
         foreach ($array_prices_high_season as $key => $value) {
             $price = new Price();
             $price->setLabel($value['label']);
-            $price->setDateStart($value['startDate']);
-            $price->setDateEnd($value['endDate']);
             $price->setPrice($value['price']);
 
             // Sauvegarde du prix
@@ -498,84 +456,22 @@ class AppFixtures extends Fixture
     public function loadAvailabilities(ObjectManager $manager): void
     {
         // Création de tableaux avec les disponibilités
-        $array_availabilities_1 = [
-            [
-                'rental' => 0,
-                'startDate' => new \DateTime('2025-01-01'),
-                'endDate' => new \DateTime('2025-03-31')
-            ],
-            [
-                'rental' => 1,
-                'startDate' => new \DateTime('2025-01-01'),
-                'endDate' => new \DateTime('2025-03-31')
-            ],
-            [
-                'rental' => 2,
-                'startDate' => new \DateTime('2025-01-01'),
-                'endDate' => new \DateTime('2025-03-31')
-            ],
-            [
-                'rental' => 3,
-                'startDate' => new \DateTime('2025-01-01'),
-                'endDate' => new \DateTime('2025-03-31')
-            ],
-            [
-                'rental' => 4,
-                'startDate' => new \DateTime('2025-01-01'),
-                'endDate' => new \DateTime('2025-03-31')
-            ],
-            [
-                'rental' => 5,
-                'startDate' => new \DateTime('2025-01-01'),
-                'endDate' => new \DateTime('2025-03-31')
-            ]
-        ];
 
-        $array_availabilities_2 = [
+        $array_availabilities = [
             [
                 'rental' => 0,
-                'startDate' => new \DateTime('2025-10-01'),
-                'endDate' => new \DateTime('2025-12-31')
+                'startDate' => new \DateTime('2025-05-01'),
+                'endDate' => new \DateTime('2025-05-10')
             ],
             [
                 'rental' => 1,
-                'startDate' => new \DateTime('2025-10-01'),
-                'endDate' => new \DateTime('2025-12-31')
-            ],
-            [
-                'rental' => 2,
-                'startDate' => new \DateTime('2025-10-01'),
-                'endDate' => new \DateTime('2025-12-31')
-            ],
-            [
-                'rental' => 3,
-                'startDate' => new \DateTime('2025-10-01'),
-                'endDate' => new \DateTime('2025-12-31')
-            ],
-            [
-                'rental' => 4,
-                'startDate' => new \DateTime('2025-10-01'),
-                'endDate' => new \DateTime('2025-12-31')
-            ],
-            [
-                'rental' => 5,
-                'startDate' => new \DateTime('2025-10-01'),
-                'endDate' => new \DateTime('2025-12-31')
+                'startDate' => new \DateTime('2025-06-05'),
+                'endDate' => new \DateTime('2025-06-07')
             ]
         ];
 
         // Boucles pour créer les disponibilités
-        foreach ($array_availabilities_1 as $key => $value) {
-            $availability = new Availability();
-            $availability->setRental($this->getReference('rental_' . $value['rental']));
-            $availability->setDateStart($value['startDate']);
-            $availability->setDateEnd($value['endDate']);
-
-            // Sauvegarde de la disponibilité
-            $manager->persist($availability);
-        }
-
-        foreach ($array_availabilities_2 as $key => $value) {
+        foreach ($array_availabilities as $key => $value) {
             $availability = new Availability();
             $availability->setRental($this->getReference('rental_' . $value['rental']));
             $availability->setDateStart($value['startDate']);

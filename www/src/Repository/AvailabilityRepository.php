@@ -16,28 +16,29 @@ class AvailabilityRepository extends ServiceEntityRepository
         parent::__construct($registry, Availability::class);
     }
 
-    //    /**
-    //     * @return Availability[] Returns an array of Availability objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Méthode permettant de récupérer toutes les informations des disponibilités
+     * @return array
+     */
+    public function getAllInfos(): array
+    {
+        $entityManager = $this->getEntityManager();
 
-    //    public function findOneBySomeField($value): ?Availability
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'a.id',
+            'a.dateStart',
+            'a.dateEnd',
+            'r.title',
+            'r.location',
+        ])
+            ->from(Availability::class, 'a')
+            ->join('a.rental', 'r')
+            ->getQuery();
+        
+        $results = $query->getResult();
+
+        return $results;
+    }
 }
