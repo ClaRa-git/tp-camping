@@ -32,6 +32,9 @@ class Reservation
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     private ?Rental $rental = null;
 
+    #[ORM\Column]
+    private ?int $price = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +108,18 @@ class Reservation
     public function setRental(?Rental $rental): static
     {
         $this->rental = $rental;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }

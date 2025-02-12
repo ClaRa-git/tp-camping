@@ -4,7 +4,6 @@ namespace App\DataFixtures;
 
 use App\Entity\Availability;
 use App\Entity\Equipment;
-use App\Entity\Price;
 use App\Entity\Rental;
 use App\Entity\Reservation;
 use App\Entity\Season;
@@ -34,9 +33,6 @@ class AppFixtures extends Fixture
 
         // Appel de la méthode pour générer des saisons
         $this->loadSeasons($manager);
-
-        // Appel de la méthode pour générer des prix
-        $this->loadPrices($manager);
 
         // Appel de la méthode pour générer des types de location
         $this->loadTypes($manager);
@@ -175,6 +171,13 @@ class AppFixtures extends Fixture
                 'dateEnd' => new \DateTime('2025-06-30')
             ],
             [
+                'label' => 'Basse saison',
+                'isClosed' => false,
+                'percentage' => 80,
+                'dateStart' => new \DateTime('2025-09-01'),
+                'dateEnd' => new \DateTime('2025-09-30')
+            ],
+            [
                 'label' => 'Haute saison',
                 'isClosed' => false,
                 'percentage' => 120,
@@ -215,154 +218,6 @@ class AppFixtures extends Fixture
     }
 
     /**
-     * Méthode pour générer des prix
-     * @param ObjectManager $manager
-     * @return void
-     */
-    public function loadPrices(ObjectManager $manager): void
-    {
-        // Création de tableaux avec les prix
-        $array_prices_low_season_1 = [
-            [
-                'label' => 'Prix / jour emplacement nu petite taille basse saison',
-                'price' => 1000,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour emplacement grande taille basse saison',
-                'price' => 1500,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour tente meublée 2 places basse saison',
-                'price' => 2000,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour tente meublée 4 places basse saison',
-                'price' => 2500,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour mobil-home 4 places basse saison',
-                'price' => 3000,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour mobil-home 8 places basse saison',
-                'price' => 3500,
-                'season' => 0
-            ]
-        ];
-
-        $array_prices_low_season_2 = [
-            [
-                'label' => 'Prix / jour emplacement nu petite taille basse saison',
-                'price' => 1000,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour emplacement grande taille basse saison',
-                'price' => 1500,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour tente meublée 2 places basse saison',
-                'price' => 2000,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour tente meublée 4 places basse saison',
-                'price' => 2500,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour mobil-home 4 places basse saison',
-                'price' => 3000,
-                'season' => 0
-            ],
-            [
-                'label' => 'Prix / jour mobil-home 8 places basse saison',
-                'price' => 3500,
-                'season' => 0
-            ]
-        ];
-
-        $array_prices_high_season = [
-            [
-                'label' => 'Prix / jour emplacement nu petite taille haute saison',
-                'price' => 1500,
-                'season' => 1
-            ],
-            [
-                'label' => 'Prix / jour emplacement grande taille haute saison',
-                'price' => 2000,
-                'season' => 1
-            ],
-            [
-                'label' => 'Prix / jour tente meublée 2 places haute saison',
-                'price' => 2500,
-                'season' => 1
-            ],
-            [
-                'label' => 'Prix / jour tente meublée 4 places haute saison',
-                'price' => 3000,
-                'season' => 1
-            ],
-            [
-                'label' => 'Prix / jour mobil-home 4 places haute saison',
-                'price' => 3500,
-                'season' => 1
-            ],
-            [
-                'label' => 'Prix / jour mobil-home 8 places haute saison',
-                'price' => 4000,
-                'season' => 1
-            ]
-        ];
-
-        // Boucles pour créer les prix
-        foreach ($array_prices_low_season_1 as $key => $value) {
-            $price = new Price();
-            $price->setLabel($value['label']);
-            $price->setPrice($value['price']);
-            $price->setSeason($this->getReference('season_' . $value['season']));
-
-            // Sauvegarde du prix
-            $manager->persist($price);
-
-            // Définition des références
-            $this->addReference('price_low_season_1_' . $key, $price);
-        }
-
-        foreach ($array_prices_low_season_2 as $key => $value) {
-            $price = new Price();
-            $price->setLabel($value['label']);
-            $price->setPrice($value['price']);
-            $price->setSeason($this->getReference('season_' . $value['season']));
-
-            // Sauvegarde du prix
-            $manager->persist($price);
-
-            // Définition des références
-            $this->addReference('price_low_season_2_' . $key, $price);
-        }
-
-        foreach ($array_prices_high_season as $key => $value) {
-            $price = new Price();
-            $price->setLabel($value['label']);
-            $price->setPrice($value['price']);
-            $price->setSeason($this->getReference('season_' . $value['season']));
-
-            // Sauvegarde du prix
-            $manager->persist($price);
-
-            // Définition des références
-            $this->addReference('price_high_season_' . $key, $price);
-        }
-    }
-
-    /**
      * Méthode pour générer des types de location
      * @param ObjectManager $manager
      * @return void
@@ -374,32 +229,32 @@ class AppFixtures extends Fixture
             [
                 'label' => 'Emplacement nu petite taille 4 personnes',
                 'imagePath' => 'emplacement-nu-petite-taille.jpg',
-                'prices' => [0]
+                'price' => 1000
             ],
             [
                 'label' => 'Emplacement nu grande taille 6 personnes',
                 'imagePath' => 'emplacement-nu-grande-taille.jpg',
-                'prices' => [1]
+                'price' => 1500
             ],
             [
                 'label' => 'Tente meublée 2 places',
                 'imagePath' => 'tente-meublee-2-places.jpg',
-                'prices' => [2]
+                'price' => 2000
             ],
             [
                 'label' => 'Tente meublée 4 places',
                 'imagePath' => 'tente-meublee-4-places.jpg',
-                'prices' => [3]
+                'price' => 2500
             ],
             [
                 'label' => 'Mobil-home 4 places',
                 'imagePath' => 'mobil-home-4-places.jpg',
-                'prices' => [4]
+                'price' => 3000
             ],
             [
                 'label' => 'Mobil-home 8 places',
                 'imagePath' => 'mobil-home-8-places.jpg',
-                'prices' => [5]
+                'price' => 3500
             ]
         ];
 
@@ -408,13 +263,7 @@ class AppFixtures extends Fixture
             $type = new Type();
             $type->setLabel($value['label']);
             $type->setImagePath($value['imagePath']);
-
-            // Boucle pour ajouter les prix aux types de location
-            foreach ($value['prices'] as $price) {
-                $type->addPrice($this->getReference('price_low_season_1_' . $price));
-                $type->addPrice($this->getReference('price_low_season_2_' . $price));
-                $type->addPrice($this->getReference('price_high_season_' . $price));
-            }
+            $type->setPrice($value['price']);
 
             // Sauvegarde du type de location
             $manager->persist($type);
@@ -578,7 +427,8 @@ class AppFixtures extends Fixture
                 'startDate' => new \DateTime('2025-04-01'),
                 'endDate' => new \DateTime('2025-04-30'),
                 'adultsNumber' => 2,
-                'kidsNumber' => 0            
+                'kidsNumber' => 0,
+                'price' => 30000
             ]
         ];
 
@@ -591,6 +441,7 @@ class AppFixtures extends Fixture
             $reservation->setDateEnd($value['endDate']);
             $reservation->setAdultsNumber($value['adultsNumber']);
             $reservation->setKidsNumber($value['kidsNumber']);
+            $reservation->setPrice($value['price']);
 
             // Sauvegarde de la réservation
             $manager->persist($reservation);

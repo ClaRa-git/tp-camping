@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Type;
 use App\Form\TypeType;
-use App\Repository\PriceRepository;
 use App\Repository\TypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,7 +24,7 @@ final class TypeController extends AbstractController
     #[Route(name: 'app_type_index', methods: ['GET'])]
     public function index(TypeRepository $typeRepository): Response
     {
-        $types = $typeRepository->getAllInfos();
+        $types = $typeRepository->findAll();
 
         return $this->render('type/index.html.twig', [
             'types' => $types,
@@ -89,13 +88,10 @@ final class TypeController extends AbstractController
      * @return Response
      */
     #[Route('/{id}', name: 'app_type_show', methods: ['GET'])]
-    public function show(Type $type, PriceRepository $priceRepository): Response
+    public function show(Type $type): Response
     {
-        $prices = $priceRepository->getPricebyType($type->getId());
-
         return $this->render('type/show.html.twig', [
-            'type' => $type,
-            'prices' => $prices
+            'type' => $type
         ]);
     }
 

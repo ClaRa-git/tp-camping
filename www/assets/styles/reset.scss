@@ -20,3 +20,11 @@ body {
     margin: 0;
     padding: 100px 0;
 }
+
+a {
+    color: $highlight-color;
+    text-decoration: none;
+    &:hover {
+        color: $accent-color;
+    }
+}

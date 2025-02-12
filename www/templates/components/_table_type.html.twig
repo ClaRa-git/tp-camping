@@ -6,7 +6,7 @@
                 <th>Id</th>
                 <th>Image</th>
                 <th>Nom</th>
-                <th>Prix</th>
+                <th>Prix / jour</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -16,11 +16,7 @@
                 <td>{{ type.id }}</td>
                 <td><img src="{{asset('images/types/' ~ type.imagePath)}}" alt="{{type.label}}" class="camping-image-admin"></td>
                 <td>{{ type.label }}</td>
-                <td>
-                    {% for price in type.prices %}
-                        {{price.label}} : {{(price.price/100)|number_format}}<br>                       
-                    {% endfor %}
-                </td>
+                <td>{{ (type.price/100)|number_format}}</td>
                 <td>
                 <div class="camping-actions">
                     <a href="{{path('app_type_show', {'id': type.id})}}" class="view-link">Voir</a>

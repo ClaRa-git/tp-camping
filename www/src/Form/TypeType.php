@@ -4,10 +4,12 @@ namespace App\Form;
 
 use App\Entity\Price;
 use App\Entity\Type;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,15 +26,11 @@ class TypeType extends AbstractType
                     'placeholder' => 'Nom du type',
                 ],
             ])
-            ->add('prices', EntityType::class, [
-                'class' => Price::class,
+            ->add('price', IntegerType::class, [
                 'label' => 'Prix',
-                'choice_label' => 'label',
-                'multiple' => true,
-                'expanded' => true,
                 'attr' => [
-                    'class' => 'form-control'
-                ]
+                    'placeholder' => 'Prix du type',
+                ],
             ])
         ;
 

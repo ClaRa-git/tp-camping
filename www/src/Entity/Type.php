@@ -19,12 +19,6 @@ class Type
     private ?string $label = null;
 
     /**
-     * @var Collection<int, Price>
-     */
-    #[ORM\ManyToMany(targetEntity: Price::class, inversedBy: 'types')]
-    private Collection $prices;
-
-    /**
      * @var Collection<int, Rental>
      */
     #[ORM\OneToMany(targetEntity: Rental::class, mappedBy: 'type')]
@@ -33,9 +27,11 @@ class Type
     #[ORM\Column(length: 255)]
     private ?string $imagePath = null;
 
+    #[ORM\Column]
+    private ?int $price = null;
+
     public function __construct()
     {
-        $this->prices = new ArrayCollection();
         $this->rentals = new ArrayCollection();
     }
 
@@ -52,30 +48,6 @@ class Type
     public function setLabel(string $label): static
     {
         $this->label = $label;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Price>
-     */
-    public function getPrices(): Collection
-    {
-        return $this->prices;
-    }
-
-    public function addPrice(Price $price): static
-    {
-        if (!$this->prices->contains($price)) {
-            $this->prices->add($price);
-        }
-
-        return $this;
-    }
-
-    public function removePrice(Price $price): static
-    {
-        $this->prices->removeElement($price);
 
         return $this;
     }
@@ -118,6 +90,18 @@ class Type
     public function setImagePath(string $imagePath): static
     {
         $this->imagePath = $imagePath;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }

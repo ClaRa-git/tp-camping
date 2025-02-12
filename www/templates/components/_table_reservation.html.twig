@@ -1,0 +1,43 @@
+<h2>{{title}}</h2>
+
+<table class="camping-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th>Nombre d'adulte(s)</th>
+                <th>Nombre d'enfant(s)</th>
+                <th>Location</th>
+                <th>Prix</th>
+                <th>Client</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.id }}</td>
+                <td>{{ reservation.dateStart|date('d/m/Y')}}</td>
+                <td>{{ reservation.dateEnd|date('d/m/Y')}}</td>
+                <td>{{ reservation.adultsNumber }}</td>
+                <td>{{ reservation.kidsNumber }}</td>
+                <td>{{ reservation.room }} n°{{ reservation.location }}</td>
+                <td>{{ (reservation.price/100)|number_format }}</td>
+                <td>{{ reservation.firstname }} {{ reservation.lastname }} <br>
+                    {{ reservation.email }} 
+                </td>
+                <td>
+                <div class="camping-actions">
+                    <a href="{{path('app_reservation_show', {'id': reservation.id})}}" class="view-link">Voir</a>
+                    <a href="{{path('app_reservation_edit', {'id': reservation.id})}}" class="edit-link">Editer</a>
+                </div>                    
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">Pas de réservation</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

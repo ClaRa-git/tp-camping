@@ -25,22 +25,11 @@ class Season
     #[ORM\Column]
     private ?int $percentage = null;
 
-    /**
-     * @var Collection<int, Price>
-     */
-    #[ORM\OneToMany(targetEntity: Price::class, mappedBy: 'season')]
-    private Collection $prices;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateStart = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateEnd = null;
-
-    public function __construct()
-    {
-        $this->prices = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -79,36 +68,6 @@ class Season
     public function setPercentage(int $percentage): static
     {
         $this->percentage = $percentage;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Price>
-     */
-    public function getPrices(): Collection
-    {
-        return $this->prices;
-    }
-
-    public function addPrice(Price $price): static
-    {
-        if (!$this->prices->contains($price)) {
-            $this->prices->add($price);
-            $price->setSeason($this);
-        }
-
-        return $this;
-    }
-
-    public function removePrice(Price $price): static
-    {
-        if ($this->prices->removeElement($price)) {
-            // set the owning side to null (unless already changed)
-            if ($price->getSeason() === $this) {
-                $price->setSeason(null);
-            }
-        }
 
         return $this;
     }
