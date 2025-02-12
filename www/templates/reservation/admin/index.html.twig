@@ -12,18 +12,8 @@
         <a href="{{path('app_reservation_new')}}" class="add-camping-btn">Ajouter une réservation</a>
 
         {% include "/components/_table_reservation.html.twig" with {
-            'title': 'Anciennes réservations',
-            'reservations': reservationsOld
-        } %}
-
-        {% include "/components/_table_reservation.html.twig" with {
-            'title': 'Réservations en cours',
-            'reservations': reservationsNow
-        } %}
-
-        {% include "/components/_table_reservation.html.twig" with {
-            'title': 'Réservations futures',
-            'reservations': reservationsFuture
+            'title': 'Réservations',
+            'reservations': reservations
         } %}
 
         <a href="{{path('app_reservation_new')}}" class="add-camping-btn">Ajouter une réservation</a>

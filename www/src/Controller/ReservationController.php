@@ -2,15 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Availability;
 use App\Entity\Reservation;
-use App\Form\ConfirmType;
 use App\Form\ReservationType;
 use App\Repository\AvailabilityRepository;
 use App\Repository\ReservationRepository;
 use App\Repository\SeasonRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +17,9 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin/reservation')]
 final class ReservationController extends AbstractController
 {
+    const STATUS_REFUSED = 0;
+    const STATUS_CONFIRMED = 1;
+    const STATUS_PENDING = 2;
     /**
      * Méthode qui affiche la liste des réservations
      * @Route("/client/reservation", name="app_reservation_index", methods={"GET"})
@@ -29,14 +29,10 @@ final class ReservationController extends AbstractController
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
     public function index(ReservationRepository $reservationRepository): Response
     {
-        $reservationsOld = $reservationRepository->getAllInfosOld();
-        $reservationsFuture = $reservationRepository->getAllInfosFuture();
-        $reservationsNow = $reservationRepository->getAllInfosNow();
+        $reservations = $reservationRepository->getAllInfos();
 
         return $this->render('reservation/admin/index.html.twig', [
-            'reservationsOld' => $reservationsOld,
-            'reservationsFuture' => $reservationsFuture,
-            'reservationsNow' => $reservationsNow
+            'reservations' => $reservations
         ]);
     }
 
@@ -67,17 +63,6 @@ final class ReservationController extends AbstractController
             $rental = $form->get('rental')->getData();
             $seasonsClosed = $seasonRepository->findSeasonsClosed();
             $availabilities = $availabilityRepository->findAvailabilitiesByRental($rental->getId());
-            
-            // On vérifie si le locatif est disponible à ces dates
-            if(!empty($availabilities)){
-                foreach ($availabilities as $availability) {
-                    if (($dateStart >= $availability->getDateStart() && $dateStart <= $availability->getDateEnd()) || 
-                        ($dateEnd >= $availability->getDateStart() && $dateEnd <= $availability->getDateEnd())) {
-                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
-                        return $this->redirectToRoute('app_reservation_new');
-                    }
-                }
-            }
 
             // On vérifie si le camping est ouvert à ces dates
             foreach ($seasonsClosed as $season) {
@@ -97,10 +82,7 @@ final class ReservationController extends AbstractController
             if ($dateEnd < $dateStart) {
                 $this->addFlash('danger', 'La date de fin doit être supérieure à la date de début !');
                 return $this->redirectToRoute('app_reservation_new');
-            }
-
-            // On vérifie si le locatif est disponible à ces dates
-            
+            }            
 
             // On vérifie si le nombre de personnes est supérieur à la capacité du locatif
             $nbPersons = $form->get('adultsNumber')->getData() + $form->get('kidsNumber')->getData();
@@ -109,7 +91,18 @@ final class ReservationController extends AbstractController
                 return $this->redirectToRoute('app_reservation_new');
             }
 
-            // On vérifie si le locatif est disponible à ces dates
+            // On vérifie si le locatif est disponible à ces dates (disponibilités)
+            if(!empty($availabilities)){
+                foreach ($availabilities as $availability) {
+                    if (($dateStart >= $availability['dateStart'] && $dateStart <= $availability['dateEnd']) || 
+                        ($dateEnd >= $availability['dateStart'] && $dateEnd <= $availability['dateEnd'])) {
+                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
+                        return $this->redirectToRoute('app_reservation_new');
+                    }
+                }
+            }
+
+            // On vérifie si le locatif est disponible à ces dates (réservations)
             $reservations = $rental->getReservations();
             foreach ($reservations as $res) {
                 if (($dateStart >= $res->getDateStart() && $dateStart <= $res->getDateEnd()) || 
@@ -122,6 +115,7 @@ final class ReservationController extends AbstractController
             // Calcul du prix
             $totalPrice = $this->calculateTotalPrice($reservation, $seasonRepository);
             $reservation->setPrice($totalPrice);
+            $reservation->setStatus(self::STATUS_CONFIRMED);
 
             if ($action === 'calculate') {
                 // Affichage du prix sans enregistrement
@@ -204,7 +198,7 @@ final class ReservationController extends AbstractController
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($reservation);
+            $reservation->setStatus(self::STATUS_REFUSED);
             $entityManager->flush();
         }
 
@@ -240,5 +234,23 @@ final class ReservationController extends AbstractController
         }
 
         return $total;
+    }
+
+    /**
+     * Méthode permettant d'afficher la liste des réservations par filtre
+     * @Route("/filter/{filter}", name="app_reservation_filter", methods={"GET"})
+     * @param ReservationRepository $reservationRepository
+     * @param string $filter
+     * @return Response
+     */
+    #[Route('/filter/{filter}', name: 'app_reservation_filter', methods: ['GET'])]
+    public function filter(ReservationRepository $reservationRepository, string $filter): Response
+    {
+        $reservations = $reservationRepository->getReservationsByFilter($filter);
+
+        return $this->render('reservation/admin/index.html.twig', [
+            'title' => 'Liste des réservations',
+            'reservations' => $reservations
+        ]);
     }
 }

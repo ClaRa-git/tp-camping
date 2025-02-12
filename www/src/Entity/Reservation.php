@@ -35,6 +35,9 @@ class Reservation
     #[ORM\Column]
     private ?int $price = null;
 
+    #[ORM\Column]
+    private ?int $status = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +123,18 @@ class Reservation
     public function setPrice(int $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

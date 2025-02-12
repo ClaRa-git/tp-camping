@@ -21,7 +21,7 @@ class ReservationRepository extends ServiceEntityRepository
      * Méthode qui retourne toutes les informations des réservations passées
      * @return array
      */
-    public function getAllInfosOld(): array
+    public function getAllInfos(): array
     {
         $entityManager = $this->getEntityManager();
 
@@ -29,11 +29,13 @@ class ReservationRepository extends ServiceEntityRepository
 
         $query = $qb->select([
             'r.id',
+            't.label as type',
             'r.dateStart',
             'r.dateEnd',
             'r.adultsNumber',
             'r.kidsNumber',
             'r.price',
+            'r.status',
             're.title as room',
             're.location',
             'u.firstname',
@@ -43,7 +45,7 @@ class ReservationRepository extends ServiceEntityRepository
             ->from(Reservation::class, 'r')
             ->leftJoin('r.rental', 're')
             ->leftJoin('r.user', 'u')
-            ->where('r.dateEnd < CURRENT_DATE()')
+            ->Join('re.type', 't')
             ->getQuery();
         
         $result = $query->getResult();
@@ -52,172 +54,38 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
-     * Méthode qui retourne toutes les informations des réservations futures
+     * Méthode pour récupérer les informations d'une réservation par filtre
+     * @param string $filter
      * @return array
      */
-    public function getAllInfosFuture(): array
+    public function getReservationsByFilter(string $filter): array
     {
         $entityManager = $this->getEntityManager();
 
-        $qb = $entityManager->createQueryBuilder();
+        $query = $entityManager->createQuery('
+            SELECT 
+            r.id,
+            r.dateStart, 
+            r.dateEnd, 
+            r.adultsNumber, 
+            r.kidsNumber, 
+            r.price,
+            r.status,
+            re.title as room, 
+            re.location,
+            u.firstname, 
+            u.lastname, 
+            u.email,
+            t.label as type            
+            FROM App\Entity\Reservation r
+            JOIN r.rental re
+            JOIN r.user u
+            JOIN re.type t
+            ORDER BY ' . $filter
+        );
 
-        $query = $qb->select([
-            'r.id',
-            'r.dateStart',
-            'r.dateEnd',
-            'r.adultsNumber',
-            'r.kidsNumber',
-            'r.price',
-            're.title as room',
-            're.location',
-            'u.firstname',
-            'u.lastname',
-            'u.email'
-        ])
-            ->from(Reservation::class, 'r')
-            ->leftJoin('r.rental', 're')
-            ->leftJoin('r.user', 'u')
-            ->where('r.dateStart > CURRENT_DATE()')
-            ->getQuery();
-        
         $result = $query->getResult();
 
         return $result;
     }
-
-    /**
-     * Méthode qui retourne toutes les informations des réservations en cours
-     * @return array
-     */
-    public function getAllInfosNow(): array
-    {
-        $entityManager = $this->getEntityManager();
-
-        $qb = $entityManager->createQueryBuilder();
-
-        $query = $qb->select([
-            'r.id',
-            'r.dateStart',
-            'r.dateEnd',
-            'r.adultsNumber',
-            'r.kidsNumber',
-            'r.price',
-            're.title as room',
-            're.location',
-            'u.firstname',
-            'u.lastname',
-            'u.email'
-        ])
-            ->from(Reservation::class, 'r')
-            ->leftJoin('r.rental', 're')
-            ->leftJoin('r.user', 'u')
-            ->where('r.dateStart <= CURRENT_DATE()')
-            ->andWhere('r.dateEnd >= CURRENT_DATE()')
-            ->getQuery();
-        
-        $result = $query->getResult();
-
-        return $result;
-    }
-
-    /**
-     * Méthode qui retourne les informations des réservations passées d'un utilisateur
-     * @param User $user
-     * @return array
-     */
-    public function getInfosOldByUser(User $user): array
-    {
-        $entityManager = $this->getEntityManager();
-
-        $qb = $entityManager->createQueryBuilder();
-
-        $query = $qb->select([
-            'r.id',
-            'r.dateStart',
-            'r.dateEnd',
-            'r.adultsNumber',
-            'r.kidsNumber',
-            're.title as room',
-            're.location'
-        ])
-            ->from(Reservation::class, 'r')
-            ->leftJoin('r.rental', 're')
-            ->leftJoin('r.user', 'u')
-            ->where('r.dateEnd < CURRENT_DATE()')
-            ->andWhere('r.user = :user')
-            ->setParameter('user', $user)
-            ->getQuery();
-        
-        $result = $query->getResult();
-
-        return $result;
-    }
-
-    /**
-     * Méthode qui retourne les informations des réservations futures d'un utilisateur
-     * @param User $user
-     * @return array
-     */
-    public function getInfosFutureByUser(User $user): array
-    {
-        $entityManager = $this->getEntityManager();
-
-        $qb = $entityManager->createQueryBuilder();
-
-        $query = $qb->select([
-            'r.id',
-            'r.dateStart',
-            'r.dateEnd',
-            'r.adultsNumber',
-            'r.kidsNumber',
-            're.title as room',
-            're.location'
-        ])
-            ->from(Reservation::class, 'r')
-            ->leftJoin('r.rental', 're')
-            ->leftJoin('r.user', 'u')
-            ->where('r.dateStart > CURRENT_DATE()')
-            ->andWhere('r.user = :user')
-            ->setParameter('user', $user)
-            ->getQuery();
-        
-        $result = $query->getResult();
-
-        return $result;
-    }
-
-    /**
-     * Méthode qui retourne les informations des réservations en cours d'un utilisateur
-     * @param User $user
-     * @return array
-     */
-    public function getInfosNowByUser(User $user): array
-    {
-        $entityManager = $this->getEntityManager();
-
-        $qb = $entityManager->createQueryBuilder();
-
-        $query = $qb->select([
-            'r.id',
-            'r.dateStart',
-            'r.dateEnd',
-            'r.adultsNumber',
-            'r.kidsNumber',
-            're.title as room',
-            're.location'
-        ])
-            ->from(Reservation::class, 'r')
-            ->leftJoin('r.rental', 're')
-            ->leftJoin('r.user', 'u')
-            ->where('r.dateStart <= CURRENT_DATE()')
-            ->andWhere('r.dateEnd >= CURRENT_DATE()')
-            ->andWhere('r.user = :user')
-            ->setParameter('user', $user)
-            ->getQuery();
-        
-        $result = $query->getResult();
-
-        return $result;
-    }
-
 }

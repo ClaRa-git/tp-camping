@@ -428,7 +428,8 @@ class AppFixtures extends Fixture
                 'endDate' => new \DateTime('2025-04-30'),
                 'adultsNumber' => 2,
                 'kidsNumber' => 0,
-                'price' => 30000
+                'price' => 30000,
+                'status' => 1
             ]
         ];
 
@@ -442,6 +443,7 @@ class AppFixtures extends Fixture
             $reservation->setAdultsNumber($value['adultsNumber']);
             $reservation->setKidsNumber($value['kidsNumber']);
             $reservation->setPrice($value['price']);
+            $reservation->setStatus($value['status']);
 
             // Sauvegarde de la réservation
             $manager->persist($reservation);

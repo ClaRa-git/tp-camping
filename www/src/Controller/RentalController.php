@@ -68,13 +68,13 @@ final class RentalController extends AbstractController
     #[Route('/{id}', name: 'app_rental_show', methods: ['GET'])]
     public function show(Rental $rental, TypeRepository $typeRepository, EquipmentRepository $equipmentRepository): Response
     {
-        $imageType = $typeRepository->getImageForRental($rental->getType()->getId());
+        $type = $typeRepository->findOneBy(['id' => $rental->getType()]);
 
         $equipments = $equipmentRepository->getEquipmentsForRental($rental->getId());
 
         return $this->render('rental/show.html.twig', [
             'rental' => $rental,
-            'imageType' => $imageType,
+            'type' => $type,
             'equipments' => $equipments,
         ]);
     }

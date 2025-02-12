@@ -48,6 +48,10 @@
                     <span class="info-value">{{client.firstname}} {{client.lastname}}</span>
                     <span class="info-value">{{client.email}}</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Statut</span>
+                    <span class="info-value">{{reservation.status ? 'Validée' : 'Annulée' }}</span>
+                </div>
             </div>
             
             <div class="action-buttons">

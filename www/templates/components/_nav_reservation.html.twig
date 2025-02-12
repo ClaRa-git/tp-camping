@@ -1,0 +1,16 @@
+{# espace de navigation #}
+<div id='navbarNavDropdown'>
+    <a href="#" class="add-camping-btn" role="button" data-bs-toggle="dropdown" aria-expanded="false">Trier par</a>
+    <ul
+        class="dropdown-menu">
+        {# on recupere ici notre fonction twig pour trier les réservations en fonction de leur type, de la date, de leur état (passées, présentes, futures) #}
+        {% for filter in filters_items() %}
+            <li>
+                <a href="{{ path('app_reservation_filter', {'filter': filter.filter}) }}" class="dropdown-item">
+                    {{filter.label}}
+                    <i class="{{filter.icon}}"></i>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

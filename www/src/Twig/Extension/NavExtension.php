@@ -20,7 +20,7 @@ class NavExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('function_name', [NavExtensionRuntime::class, 'doSomething']),
+            new TwigFunction('filters_items', [NavExtensionRuntime::class, 'filtersItems']),
         ];
     }
 }

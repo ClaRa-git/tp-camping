@@ -1,9 +1,12 @@
 <h2>{{title}}</h2>
 
+{% include "components/_nav_reservation.html.twig" %}
+
 <table class="camping-table">
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Type</th>
                 <th>Date de début</th>
                 <th>Date de fin</th>
                 <th>Nombre d'adulte(s)</th>
@@ -11,6 +14,7 @@
                 <th>Location</th>
                 <th>Prix</th>
                 <th>Client</th>
+                <th>Etat</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -18,6 +22,7 @@
         {% for reservation in reservations %}
             <tr>
                 <td>{{ reservation.id }}</td>
+                <td>{{ reservation.type }}</td>
                 <td>{{ reservation.dateStart|date('d/m/Y')}}</td>
                 <td>{{ reservation.dateEnd|date('d/m/Y')}}</td>
                 <td>{{ reservation.adultsNumber }}</td>
@@ -27,6 +32,12 @@
                 <td>{{ reservation.firstname }} {{ reservation.lastname }} <br>
                     {{ reservation.email }} 
                 </td>
+                <td>
+                    {% if reservation.status == 1 %}
+                        <span class="badge badge-success">Validée</span>
+                    {% else %}
+                        <span class="badge badge-danger">Annulée</span>
+                    {% endif %}
                 <td>
                 <div class="camping-actions">
                     <a href="{{path('app_reservation_show', {'id': reservation.id})}}" class="view-link">Voir</a>
