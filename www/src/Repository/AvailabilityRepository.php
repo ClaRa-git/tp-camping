@@ -41,4 +41,31 @@ class AvailabilityRepository extends ServiceEntityRepository
 
         return $results;
     }
+
+    /**
+     * Méthode permettant de récupérer toutes les disponibilités pour une location
+     * @param int $id
+     * @return array
+     */
+    public function findAvailabilitiesByRental(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'a.id',
+            'a.dateStart',
+            'a.dateEnd',
+        ])
+            ->from(Availability::class, 'a')
+            ->join('a.rental', 'r')
+            ->where('r.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+        
+        $results = $query->getResult();
+
+        return $results;
+    }
 }

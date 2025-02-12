@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Availability;
 use App\Entity\Reservation;
 use App\Form\ConfirmType;
 use App\Form\ReservationType;
+use App\Repository\AvailabilityRepository;
 use App\Repository\ReservationRepository;
 use App\Repository\SeasonRepository;
 use App\Repository\UserRepository;
@@ -43,10 +45,12 @@ final class ReservationController extends AbstractController
      * @Route("/client/reservation/new", name="app_reservation_new", methods={"GET", "POST"})
      * @param Request $request
      * @param SeasonRepository $seasonRepository
+     * @param AvailabilityRepository $availabilityRepository
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SeasonRepository $seasonRepository, EntityManagerInterface $entityManager): Response  
+    public function new(Request $request, SeasonRepository $seasonRepository, AvailabilityRepository $availabilityRepository,EntityManagerInterface $entityManager): Response  
     {
         $reservation = new Reservation();
         $form = $this->createForm(ReservationType::class, $reservation);
@@ -62,6 +66,18 @@ final class ReservationController extends AbstractController
             $dateEnd = $form->get('dateEnd')->getData();
             $rental = $form->get('rental')->getData();
             $seasonsClosed = $seasonRepository->findSeasonsClosed();
+            $availabilities = $availabilityRepository->findAvailabilitiesByRental($rental->getId());
+            
+            // On vérifie si le locatif est disponible à ces dates
+            if(!empty($availabilities)){
+                foreach ($availabilities as $availability) {
+                    if (($dateStart >= $availability->getDateStart() && $dateStart <= $availability->getDateEnd()) || 
+                        ($dateEnd >= $availability->getDateStart() && $dateEnd <= $availability->getDateEnd())) {
+                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
+                        return $this->redirectToRoute('app_reservation_new');
+                    }
+                }
+            }
 
             // On vérifie si le camping est ouvert à ces dates
             foreach ($seasonsClosed as $season) {
@@ -82,6 +98,9 @@ final class ReservationController extends AbstractController
                 $this->addFlash('danger', 'La date de fin doit être supérieure à la date de début !');
                 return $this->redirectToRoute('app_reservation_new');
             }
+
+            // On vérifie si le locatif est disponible à ces dates
+            
 
             // On vérifie si le nombre de personnes est supérieur à la capacité du locatif
             $nbPersons = $form->get('adultsNumber')->getData() + $form->get('kidsNumber')->getData();

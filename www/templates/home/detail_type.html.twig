@@ -1,0 +1,22 @@
+{# Récupération de la base #}
+{% extends 'base.html.twig' %}
+
+{# On définit le titre de la page #}
+{% block title %}
+	{{title|default('Nos types')}}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<header class="mt-4">
+			<h1 class="text-center mb-5 display-4">{{type.label|default('Nos types')}}</h1>			
+		</header>
+
+		<div class="camping-grid">
+			{% for rental in rentals %}
+				{% include 'components/_rental_card.html.twig' with {'rental': rental} %}
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock %}

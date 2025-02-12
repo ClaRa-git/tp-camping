@@ -1,0 +1,6 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	{# On récupère le template du composant _detail_card.html.twig #}
+	{% include 'components/_detail_rental_card.html.twig' with {'rental':rental, 'equipments':equipments, 'type':type} %}
+{% endblock %}

@@ -75,4 +75,39 @@ class RentalRepository extends ServiceEntityRepository
 
         return array_values($groupedResults);
     }
+
+    /**
+     * Méthode pour récupérer toutes les informations d'une location par son id
+     * @param int $id
+     * @return array
+     */
+    public function getAllInfosById(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'r.id',
+            'r.title',
+            'r.description',
+            'r.bedding',
+            'r.surface',
+            'r.location',
+            'r.isClean',
+            't.label as typeLabel',
+            't.imagePath'
+        ])
+            ->from(Rental::class, 'r')
+            ->join('r.type', 't')
+            ->where('r.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+
+        $results = $query->getResult();
+
+        dd($results);
+
+        return $results;
+    }
 }
