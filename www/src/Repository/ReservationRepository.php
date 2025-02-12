@@ -18,7 +18,7 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
-     * Méthode qui retourne toutes les informations des réservations passées
+     * Méthode qui retourne toutes les informations des réservations
      * @return array
      */
     public function getAllInfos(): array
@@ -46,6 +46,45 @@ class ReservationRepository extends ServiceEntityRepository
             ->leftJoin('r.rental', 're')
             ->leftJoin('r.user', 'u')
             ->Join('re.type', 't')
+            ->getQuery();
+        
+        $result = $query->getResult();
+
+        return $result;
+    }
+
+    /**
+     * Méthode qui retourne toutes les informations des réservations pour un utilisateur
+     * @param int $userId
+     * @return array
+     */
+    public function getAllInfosByIdUser(int $userId): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'r.id',
+            't.label as type',
+            'r.dateStart',
+            'r.dateEnd',
+            'r.adultsNumber',
+            'r.kidsNumber',
+            'r.price',
+            'r.status',
+            're.title as room',
+            're.location',
+            'u.firstname',
+            'u.lastname',
+            'u.email'
+        ])
+            ->from(Reservation::class, 'r')
+            ->leftJoin('r.rental', 're')
+            ->leftJoin('r.user', 'u')
+            ->Join('re.type', 't')
+            ->where('u.id = :userId')
+            ->setParameter('userId', $userId)
             ->getQuery();
         
         $result = $query->getResult();
