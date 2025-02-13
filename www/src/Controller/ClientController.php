@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ClientController extends AbstractController
 {
     /**
-     * Méthode qui renvoie la page d'accueil de l'utilisateur
+     * Méthode qui renvoie le dashboard de l'utilisateur
      * @Route("/dashboard", name="app_client_dashboard")
      * @return Response
      */

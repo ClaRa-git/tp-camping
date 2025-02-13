@@ -24,6 +24,7 @@ final class TypeController extends AbstractController
     #[Route(name: 'app_type_index', methods: ['GET'])]
     public function index(TypeRepository $typeRepository): Response
     {
+        // Récupération de tous les types de bien
         $types = $typeRepository->findAll();
 
         return $this->render('type/index.html.twig', [
@@ -70,6 +71,7 @@ final class TypeController extends AbstractController
                 $type->setImagePath($newFilename);
             }
 
+            // Enregistrement du type de bien
             $typeRepository->save($type, true);
 
             return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);

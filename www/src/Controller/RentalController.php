@@ -25,6 +25,7 @@ final class RentalController extends AbstractController
     #[Route(name: 'app_rental_index', methods: ['GET'])]
     public function index(RentalRepository $rentalRepository): Response
     {
+        // On récupère toutes les locations avec toutes les informations
         $rentals = $rentalRepository->getAllInfos();
 
         return $this->render('rental/index.html.twig', [
@@ -68,8 +69,10 @@ final class RentalController extends AbstractController
     #[Route('/{id}', name: 'app_rental_show', methods: ['GET'])]
     public function show(Rental $rental, TypeRepository $typeRepository, EquipmentRepository $equipmentRepository): Response
     {
+        // On récupère le type de la location
         $type = $typeRepository->findOneBy(['id' => $rental->getType()]);
 
+        // On récupère les équipements de la location
         $equipments = $equipmentRepository->getEquipmentsForRental($rental->getId());
 
         return $this->render('rental/show.html.twig', [

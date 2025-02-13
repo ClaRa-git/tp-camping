@@ -168,35 +168,35 @@ class AppFixtures extends Fixture
                 'isClosed' => false,
                 'percentage' => 80,
                 'dateStart' => new \DateTime('2025-04-01'),
-                'dateEnd' => new \DateTime('2025-06-30')
+                'dateEnd' => new \DateTime('2025-06-30 23:59:59')
             ],
             [
                 'label' => 'Basse saison',
                 'isClosed' => false,
                 'percentage' => 80,
                 'dateStart' => new \DateTime('2025-09-01'),
-                'dateEnd' => new \DateTime('2025-09-30')
+                'dateEnd' => new \DateTime('2025-09-30 23:59:59')
             ],
             [
                 'label' => 'Haute saison',
                 'isClosed' => false,
                 'percentage' => 120,
                 'dateStart' => new \DateTime('2025-07-01'),
-                'dateEnd' => new \DateTime('2025-08-31')
+                'dateEnd' => new \DateTime('2025-08-31 23:59:59')
             ],
             [
                 'label' => 'Saison fermée',
                 'isClosed' => true,
                 'percentage' => 0,
                 'dateStart' => new \DateTime('2025-01-01'),
-                'dateEnd' => new \DateTime('2025-03-31'),
+                'dateEnd' => new \DateTime('2025-03-31 23:59:59'),
             ],
             [
                 'label' => 'Saison fermée',
                 'isClosed' => true,
                 'percentage' => 0,
                 'dateStart' => new \DateTime('2025-10-01'),
-                'dateEnd' => new \DateTime('2025-12-31'),
+                'dateEnd' => new \DateTime('2025-12-31 23:59:59'),
             ]
         ];
 
@@ -391,12 +391,12 @@ class AppFixtures extends Fixture
             [
                 'rental' => 0,
                 'startDate' => new \DateTime('2025-05-01'),
-                'endDate' => new \DateTime('2025-05-10')
+                'endDate' => new \DateTime('2025-05-10 23:59:59')
             ],
             [
                 'rental' => 1,
                 'startDate' => new \DateTime('2025-06-05'),
-                'endDate' => new \DateTime('2025-06-07')
+                'endDate' => new \DateTime('2025-06-07 23:59:59')
             ]
         ];
 

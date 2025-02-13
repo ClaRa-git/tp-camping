@@ -19,8 +19,7 @@
 
     <div class="action-buttons">
 		<div>
-			{# suppression #}
-			{% include "equipment/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
+			{# {% include "equipment/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %} #}
 		</div>
 		<div>
 			<a href="{{ path('app_equipment_edit', {'id': equipment.id}) }}" class="btn btn-edit">Editer</a>

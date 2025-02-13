@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Série{% endblock %}
+{% block title %}Type de logement{% endblock %}
 
 {% block body %}
     <div class="camping-detail-card">
@@ -26,8 +26,7 @@
             
             <div class="action-buttons">
                 <div>
-                    {# suppression #}
-                    {% include "type/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
+                    {# {% include "type/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %} #}
                 </div>
                 <div>
                     <a href="{{ path('app_type_edit', {'id': type.id}) }}" class="btn btn-edit">Editer</a>

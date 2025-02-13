@@ -24,6 +24,7 @@ final class AvailabilityController extends AbstractController
     #[Route(name: 'app_availability_index', methods: ['GET'])]
     public function index(AvailabilityRepository $availabilityRepository): Response
     {
+        // On récupère toutes les non disponibilités
         $availabilities = $availabilityRepository->getAllInfos();
 
         return $this->render('availability/index.html.twig', [
@@ -67,6 +68,7 @@ final class AvailabilityController extends AbstractController
     #[Route('/{id}', name: 'app_availability_show', methods: ['GET'])]
     public function show(Availability $availability, RentalRepository $rentalRepository): Response
     {
+        // On récupère le bien associé à la disponibilité
         $rental = $rentalRepository->find($availability->getRental()->getId());
 
         return $this->render('availability/show.html.twig', [

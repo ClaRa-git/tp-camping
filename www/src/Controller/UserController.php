@@ -24,7 +24,9 @@ final class UserController extends AbstractController
     #[Route('/admin/client', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
+        // On récupère les utilisateurs ayant le rôle ROLE_ADMIN
         $roleAdmin = $userRepository->findAllAdmins();
+        // On récupère les utilisateurs ayant le rôle ROLE_USER
         $roleUser = $userRepository->findAllUsers();
 
         return $this->render('user/index.html.twig', [

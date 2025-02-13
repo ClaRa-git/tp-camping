@@ -41,7 +41,7 @@
             <div class="action-buttons">
                 {% if app.user and not is_granted('ROLE_ADMIN')%}
                     <div>
-                        <a href="#" class="btn btn-edit">Réserver</a>
+                        <a href="{{path('app_reservation_client_new', {'id': rental.id})}}" class="btn btn-edit">Réserver</a>
                     </div>
                 {% endif %}
                 <div>

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle réservation{% endblock %}
+
+{% block body %}
+    <h1>Créer une nouvelle réservation</h1>
+
+    <h2>{{ rental.title }} n°{{ rental.location }}</h2>
+
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {{ include('reservation/client/_form.html.twig') }}
+
+    <div class="action-buttons">
+        <a href="{{ path('app_reservation_client_index') }}" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à la liste
+        </a>
+    </div>
+{% endblock %}

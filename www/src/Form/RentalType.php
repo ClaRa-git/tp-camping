@@ -33,7 +33,7 @@ class RentalType extends AbstractType
                 ]
             ])
             ->add('bedding', IntegerType::class, [
-                'label' => 'Literie',
+                'label' => 'Nombre de lits',
                 'attr' => [
                     'placeholder' => 'Nombre de lits',
                 ]

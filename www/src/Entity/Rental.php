@@ -228,7 +228,7 @@ class Rental
         return $this->isClean;
     }
 
-    public function setClean(bool $isClean): static
+    public function setIsClean(bool $isClean): static
     {
         $this->isClean = $isClean;
 

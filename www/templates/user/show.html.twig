@@ -20,8 +20,7 @@
 		{# Si l'utilisateur connecté est admin #}
 		{% if is_granted('ROLE_ADMIN') %}
 			<div>
-				{# suppression #}
-				{% include "user/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
+				{# {% include "user/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %} #}
 			</div>
 		{% endif %}
 		<div>
@@ -39,8 +38,5 @@
 				<a href="{{ path('app_client_dashboard') }}" class="btn btn-primary">Retour au dashboard</a>
 			</div>
 		{% endif %}
-		
-
 	</div>
-
 {% endblock %}

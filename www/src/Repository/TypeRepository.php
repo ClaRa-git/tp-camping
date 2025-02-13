@@ -53,4 +53,25 @@ class TypeRepository extends ServiceEntityRepository
 
         return $result['imagePath'];
     }
+
+    /**
+     * Méthode pour récupérer le type d'une location
+     * @param int $rentalId
+     * @return Type
+     */
+    public function getTypeForRental(int $rentalId): Type
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select('t')
+            ->from(Type::class, 't')
+            ->join('t.rentals', 'r')
+            ->where('r.id = :rentalId')
+            ->setParameter('rentalId', $rentalId)
+            ->getQuery();
+        
+        return $query->getOneOrNullResult();
+    }
 }

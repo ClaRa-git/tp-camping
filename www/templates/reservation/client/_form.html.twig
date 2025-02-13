@@ -1,0 +1,47 @@
+{{ form_start(form, {'attr': {'class': 'camping-form'}}) }}
+{{ form_errors(form) }}
+
+    <div class="form-group">
+        {{ form_label(form.dateStart) }}
+        {{ form_widget(form.dateStart) }}
+        {{ form_errors(form.dateStart) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.dateEnd) }}
+        {{ form_widget(form.dateEnd) }}
+        {{ form_errors(form.dateEnd) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.adultsNumber) }}
+        {{ form_widget(form.adultsNumber) }}
+        {{ form_errors(form.adultsNumber) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.kidsNumber) }}
+        {{ form_widget(form.kidsNumber) }}
+        {{ form_errors(form.kidsNumber) }}
+    </div>
+
+    {# Affichage du prix estimé #}
+    <div class="form-group">
+        <label>Prix estimé :</label>
+        <strong id="price-display">{{ price is defined ? (price/100)|number_format : 'Non calculé' }}</strong>
+        {{ form_widget(form.price, {'attr': {'id': 'price-input'}}) }}
+    </div>
+
+    {# Bouton pour calculer le prix #}
+    <div class="form-group">
+        {{ form_label(form.calculate) }}
+        {{ form_widget(form.calculate) }}
+    </div>
+
+    {# Bouton pour confirmer la réservation (affiché seulement si le prix est défini) #}
+    <div class="form-group">
+        {{ form_label(form.confirm) }}
+        {{ form_widget(form.confirm) }}
+    </div>
+
+{{ form_end(form) }}

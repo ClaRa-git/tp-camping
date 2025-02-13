@@ -7,7 +7,7 @@
 
 			{# Si l'utilisateur est connecté #}
 			{% if app.user and not is_granted('ROLE_ADMIN') %}
-				<a href="#" class="btn btn-detail">Réserver</a>
+				<a href="{{path('app_reservation_client_new', {'id': rental.id})}}" class="btn btn-detail">Réserver</a>
 			{% endif %}
 		</div>
 

@@ -17,9 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin/reservation')]
 final class ReservationController extends AbstractController
 {
+    // Constantes pour les statuts des réservations
     const STATUS_REFUSED = 0;
     const STATUS_CONFIRMED = 1;
     const STATUS_PENDING = 2;
+
     /**
      * Méthode qui affiche la liste des réservations
      * @Route("/client/reservation", name="app_reservation_index", methods={"GET"})
@@ -29,6 +31,7 @@ final class ReservationController extends AbstractController
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
     public function index(ReservationRepository $reservationRepository): Response
     {
+        // Récupération de toutes les réservations
         $reservations = $reservationRepository->getAllInfos();
 
         return $this->render('reservation/admin/index.html.twig', [
@@ -66,26 +69,39 @@ final class ReservationController extends AbstractController
 
             // On vérifie si le camping est ouvert à ces dates
             foreach ($seasonsClosed as $season) {
-                if ($dateStart >= $season->getDateStart() && $dateEnd <= $season->getDateEnd()) {
+                if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateStart()->setTime(0,0,0)) ||  
+                ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateEnd())) {
                     $this->addFlash('danger', 'Le camping est fermé du ' . $season->getDateStart()->format('d/m/Y') . ' au ' . $season->getDateEnd()->format('d/m/Y') . ' !');
                     return $this->redirectToRoute('app_reservation_new');
                 }
             }
 
             // On vérifie si la date sélectionnée est supérieure à la date du jour
-            if ($dateStart < new \DateTime('now')) {
+            $now = new \DateTime('now');
+            $now->setTime(0,0,0);
+            $dateSZT = $dateStart->setTime(0,0,0);
+            $dateEZT = $dateEnd->setTime(0,0,0);
+            if ($dateSZT < $now) {
                 $this->addFlash('danger', 'La date de début doit être supérieure à la date du jour !');
                 return $this->redirectToRoute('app_reservation_new');
             }
 
             // On vérifie si la date de fin est supérieure à la date de début
-            if ($dateEnd < $dateStart) {
+            if ($dateEZT <= $dateSZT) {
                 $this->addFlash('danger', 'La date de fin doit être supérieure à la date de début !');
                 return $this->redirectToRoute('app_reservation_new');
             }            
 
-            // On vérifie si le nombre de personnes est supérieur à la capacité du locatif
+            $nbAdults = $form->get('adultsNumber')->getData();
+            $nbKids = $form->get('kidsNumber')->getData();
+            // On vérifie si le nombre d'adultes et d'enfants rentré est valide
+            if ($nbAdults <= 0 || $nbKids < 0) {
+                $this->addFlash('danger', 'Le nombre de personnes doit être supérieur à 0 pour les adultes et supérieur ou égal à 0 pour les enfants !');
+                return $this->redirectToRoute('app_reservation_new');
+            }
+
             $nbPersons = $form->get('adultsNumber')->getData() + $form->get('kidsNumber')->getData();
+            // On vérifie si le nombre de personnes est supérieur à la capacité du locatif
             if ($nbPersons > $rental->getBedding()) {
                 $this->addFlash('danger', 'Le nombre de personnes est supérieur à la capacité du locatif !');
                 return $this->redirectToRoute('app_reservation_new');
@@ -94,7 +110,7 @@ final class ReservationController extends AbstractController
             // On vérifie si le locatif est disponible à ces dates (disponibilités)
             if(!empty($availabilities)){
                 foreach ($availabilities as $availability) {
-                    if (($dateStart >= $availability['dateStart'] && $dateStart <= $availability['dateEnd']) || 
+                    if ((($dateStart >= $availability['dateStart']) && $dateStart <= $availability['dateEnd']) || 
                         ($dateEnd >= $availability['dateStart'] && $dateEnd <= $availability['dateEnd'])) {
                         $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
                         return $this->redirectToRoute('app_reservation_new');
@@ -117,6 +133,7 @@ final class ReservationController extends AbstractController
             $reservation->setPrice($totalPrice);
             $reservation->setStatus(self::STATUS_CONFIRMED);
 
+            // On vérifie si l'action est de calculer le prix ou de confirmer la réservation
             if ($action === 'calculate') {
                 // Affichage du prix sans enregistrement
                 return $this->render('reservation/admin/new.html.twig', [
@@ -126,6 +143,7 @@ final class ReservationController extends AbstractController
                 ]);
             }
 
+            // Enregistrement de la réservation
             if ($action === 'confirm' && $form->isValid()) {
                 // Enregistrement de la réservation
                 $entityManager->persist($reservation);
@@ -152,6 +170,7 @@ final class ReservationController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
     public function show(Reservation $reservation, UserRepository $userRepository): Response
     {
+        // Récupération du client
         $client = $userRepository->find($reservation->getUser());
 
         return $this->render('reservation/admin/show.html.twig', [
@@ -187,7 +206,7 @@ final class ReservationController extends AbstractController
     }
 
     /**
-     * Méthode qui permet de supprimer une réservation
+     * Méthode qui permet d'annuler une réservation
      * @Route("/admin/{id}", name="app_reservation_delete", methods={"POST"})
      * @param Request $request
      * @param Reservation $reservation
@@ -206,7 +225,7 @@ final class ReservationController extends AbstractController
     }
 
     /**
-     * Méthode pour calculer le prix totla d'une réservation
+     * Méthode pour calculer le prix total d'une réservation
      * @param Reservation $reservation
      * @param SeasonRepository $seasonRepository
      * @return int
@@ -215,16 +234,17 @@ final class ReservationController extends AbstractController
     {
         $total = 0;
 
-        $dateStart = $reservation->getDateStart();
-        $dateEnd = $reservation->getDateEnd();
+        $dateStart = $reservation->getDateStart()->setTime(0,0,0);
+        $dateEnd = $reservation->getDateEnd()->setTime(0,0,0);
 
+        // On récupère les saisons qui chevauchent la réservation
         $seasons = $seasonRepository->findSeasonsBetweenDates($dateStart, $dateEnd);
 
         foreach ($seasons as $season) {
             // On détermine la période de la saison qui chevauche la réservation
             // Pour avoir le nombre de jours correct de la période on met le temps à 0
-            $start = $dateStart->setTime(0,0,0) > $season->getDateStart()->setTime(0,0,0) ? $dateStart->setTime(0,0,0) : $season->getDateStart()->setTime(0,0,0);
-            $end = $dateEnd->setTime(0,0,0) < $season->getDateEnd()->setTime(0,0,0) ? $dateEnd->setTime(0,0,0) : $season->getDateEnd()->setTime(0,0,0);
+            $start = $dateStart > $season->getDateStart()->setTime(0,0,0) ? $dateStart : $season->getDateStart()->setTime(0,0,0);
+            $end = $dateEnd < $season->getDateEnd()->setTime(0,0,0) ? $dateEnd : $season->getDateEnd()->setTime(0,0,0);
 
             // On calcule le nombre de jours de la période
             $days = $start->diff($end)->days + 1;

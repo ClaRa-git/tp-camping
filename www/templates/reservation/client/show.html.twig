@@ -44,26 +44,21 @@
 
             <div class="camping-info-detail mb-4">
                 <div class="info-item">
-                    <span class="info-label">Information sur le client</span>
-                    <span class="info-value">{{client.firstname}} {{client.lastname}}</span>
-                    <span class="info-value">{{client.email}}</span>
-                </div>
-                <div class="info-item">
                     <span class="info-label">Statut</span>
                     <span class="info-value">{{reservation.status ? 'Validée' : 'Annulée' }}</span>
                 </div>
             </div>
+
+            {% if (isCancelable) %}
+                <div class="action-buttons">
+                    {% include "reservation/client/_delete_form.html.twig" %}
+                </div>
+            {% endif %}
             
             <div class="action-buttons">
                 <div>
-                    {% include "reservation/admin/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
-                </div>
-                <div>
-                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" class="btn btn-edit">Editer</a>
-                </div>
-                <div>
-                    <a href="{{path('app_reservation_index')}}" class="btn btn-back">
-                        <i class="fas fa-arrow-left"></i>Retour à la liste</a>
+                    <a href="{{path('app_reservation_client_index')}}" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste</a>
                 </div>
             </div>
         </div>

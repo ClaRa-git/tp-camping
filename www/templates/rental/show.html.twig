@@ -3,7 +3,57 @@
 {% block title %}Location{% endblock %}
 
 {% block body %}
-	
-    {% include 'components/_detail_rental_card.html.twig' with {'rental': rental, 'equipments': equipments, 'type': type} %}
 
+<div class="camping-detail-card">
+		<div class="camping-detail-image">
+			<img src="{{asset('images/types/' ~ type.imagePath)}}" alt="{{rental.title}}">
+		</div>
+		<div class="camping-detail-content">
+			<h1 class="camping-title">{{rental.title}}</h1>
+            
+            <div class="camping-consoles mb-3">
+                {% for equipment in equipments %}
+                    <span class="console-badge">{{equipment.label}}</span>
+                {% endfor %}
+            </div>
+
+            <div class="camping-info-detail mb-4">
+				<div class="info-item">
+					<span class="info-label">Surface :
+					</span>
+					<span class="info-value">{{rental.surface}} m²</span>
+				</div>
+                <div class="info-item">
+                    <span class="info-label">Emplacement :
+                    </span>
+                    <span class="info-value">{{rental.location}}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nombre de lit(s) :
+                    </span>
+                    <span class="info-value">{{rental.bedding}}</span>
+                </div>
+			</div>
+            <div class="camping-info-detail mb-4">
+                <div class="info-item">
+                    <span class="info-label">Prix moyen :</span>
+                    <span class="info-value">{{(rental.type.price/100)|number_format}} / jour</span>
+                </div>
+            </div>
+			<div class="camping-synopsis mb-4">
+				<h2>Description</h2>
+				<p>{{rental.description}}</p>
+            </div>	
+            <div class="action-buttons">
+                <div>
+                    <a href="{{ path('app_type_edit', {'id': type.id}) }}" class="btn btn-edit">Editer</a>
+                </div>
+                <div>
+                    <a href="{{path('app_admin_dashboard', {'id':rental.type.id})}}" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i> 
+                        Retour au dashboard</a>
+                </div>
+            </div>
+		</div>
+    </div>
 {% endblock %}
