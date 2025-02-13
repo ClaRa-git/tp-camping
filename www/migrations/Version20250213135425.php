@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250211153251 extends AbstractMigration
+final class Version20250213135425 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -24,7 +24,7 @@ final class Version20250211153251 extends AbstractMigration
         $this->addSql('CREATE TABLE equipment (id INT AUTO_INCREMENT NOT NULL, label VARCHAR(100) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE rental (id INT AUTO_INCREMENT NOT NULL, type_id INT DEFAULT NULL, title VARCHAR(255) NOT NULL, description LONGTEXT NOT NULL, bedding INT NOT NULL, surface INT NOT NULL, location INT NOT NULL, is_clean TINYINT(1) NOT NULL, INDEX IDX_1619C27DC54C8C93 (type_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE rental_equipment (rental_id INT NOT NULL, equipment_id INT NOT NULL, INDEX IDX_6CD8D28CA7CF2329 (rental_id), INDEX IDX_6CD8D28C517FE9FE (equipment_id), PRIMARY KEY(rental_id, equipment_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE reservation (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, rental_id INT DEFAULT NULL, date_start DATETIME NOT NULL, date_end DATETIME NOT NULL, adults_number INT NOT NULL, kids_number INT NOT NULL, price INT NOT NULL, INDEX IDX_42C84955A76ED395 (user_id), INDEX IDX_42C84955A7CF2329 (rental_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE reservation (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, rental_id INT DEFAULT NULL, date_start DATETIME NOT NULL, date_end DATETIME NOT NULL, adults_number INT NOT NULL, kids_number INT NOT NULL, price INT NOT NULL, status INT NOT NULL, INDEX IDX_42C84955A76ED395 (user_id), INDEX IDX_42C84955A7CF2329 (rental_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE season (id INT AUTO_INCREMENT NOT NULL, label VARCHAR(30) NOT NULL, is_closed TINYINT(1) NOT NULL, percentage INT NOT NULL, date_start DATETIME NOT NULL, date_end DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE type (id INT AUTO_INCREMENT NOT NULL, label VARCHAR(100) NOT NULL, image_path VARCHAR(255) NOT NULL, price INT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL COMMENT \'(DC2Type:json)\', password VARCHAR(255) NOT NULL, firstname VARCHAR(30) NOT NULL, lastname VARCHAR(30) NOT NULL, username VARCHAR(50) NOT NULL, UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');

@@ -363,7 +363,7 @@ class AppFixtures extends Fixture
             $rental->setSurface($value['surface']);
             $rental->setLocation($value['location']);
             $rental->setType($this->getReference('type_' . $value['type']));
-            $rental->setClean($value['isClean'] ?? false);
+            $rental->setIsClean($value['isClean'] ?? false);
 
             // Boucle pour ajouter les équipements aux locations
             foreach ($value['equipment'] as $equipment) {
@@ -428,9 +428,30 @@ class AppFixtures extends Fixture
                 'endDate' => new \DateTime('2025-04-30'),
                 'adultsNumber' => 2,
                 'kidsNumber' => 0,
-                'price' => 30000,
+                'price' => 24000,
+                'status' => 0
+            ],
+            [
+                'rental' => 0,
+                'user' => 1,
+                'startDate' => new \DateTime('2025-05-15'),
+                'endDate' => new \DateTime('2025-05-30'),
+                'adultsNumber' => 2,
+                'kidsNumber' => 0,
+                'price' => 12800,
                 'status' => 1
-            ]
+            ],
+            
+            [
+                'rental' => 1,
+                'user' => 1,
+                'startDate' => new \DateTime('2025-05-15'),
+                'endDate' => new \DateTime('2025-05-30'),
+                'adultsNumber' => 2,
+                'kidsNumber' => 0,
+                'price' => 19200,
+                'status' => 1
+            ],
         ];
 
         // Boucle pour créer les réservations

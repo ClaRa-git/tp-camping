@@ -10,9 +10,11 @@ use App\Repository\SeasonRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/admin/reservation')]
 final class ReservationController extends AbstractController
@@ -160,7 +162,6 @@ final class ReservationController extends AbstractController
         ]);
     }
 
-
     /**
      * Méthode qui affiche les détails d'une réservation
      * @Route("/client/{id}", name="app_reservation_show", methods={"GET"})
@@ -170,6 +171,9 @@ final class ReservationController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
     public function show(Reservation $reservation, UserRepository $userRepository): Response
     {
+        if (!$reservation) {
+            throw new NotFoundHttpException('Réservation non trouvée');
+        }
         // Récupération du client
         $client = $userRepository->find($reservation->getUser());
 
@@ -190,6 +194,9 @@ final class ReservationController extends AbstractController
     #[Route('/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
+        if (!$reservation) {
+            throw new NotFoundHttpException('Réservation non trouvée');
+        }
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
 
@@ -216,12 +223,49 @@ final class ReservationController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
+        if (!$reservation) {
+            throw new NotFoundHttpException('Réservation non trouvée');
+        }
         if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
             $reservation->setStatus(self::STATUS_REFUSED);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Méthode permettant d'afficher la liste des réservations par filtre
+     * @Route("/filter/{filter}", name="app_reservation_filter", methods={"GET"})
+     * @param ReservationRepository $reservationRepository
+     * @param string $filter
+     * @return Response
+     */
+    #[Route('/filter/{filter}', name: 'app_reservation_filter', methods: ['GET'])]
+    public function filter(ReservationRepository $reservationRepository, string $filter): Response
+    {
+        $reservations = $reservationRepository->getReservationsByFilter($filter);
+
+        return $this->render('reservation/admin/index.html.twig', [
+            'title' => 'Liste des réservations',
+            'reservations' => $reservations
+        ]);
+    }
+
+    /**
+     * Méthode permettant d'envoyer des données en JSON
+     * @Route("/json", name="app_reservation_json", methods={"GET"})
+     * @param ReservationRepository $reservationRepository
+     * @return JsonResponse
+     */
+    #[Route('/api/test', name: 'app_reservation_json', methods: ['GET'])]
+    public function getTodayReservations(ReservationRepository $reservationRepository): JsonResponse
+    {        
+        //$date = new \DateTime();
+        $date = new \DateTime('2025-05-15');
+        $reservations = $reservationRepository->findByDate($date);
+    
+        return new JsonResponse($reservations);
     }
 
     /**
@@ -254,23 +298,5 @@ final class ReservationController extends AbstractController
         }
 
         return $total;
-    }
-
-    /**
-     * Méthode permettant d'afficher la liste des réservations par filtre
-     * @Route("/filter/{filter}", name="app_reservation_filter", methods={"GET"})
-     * @param ReservationRepository $reservationRepository
-     * @param string $filter
-     * @return Response
-     */
-    #[Route('/filter/{filter}', name: 'app_reservation_filter', methods: ['GET'])]
-    public function filter(ReservationRepository $reservationRepository, string $filter): Response
-    {
-        $reservations = $reservationRepository->getReservationsByFilter($filter);
-
-        return $this->render('reservation/admin/index.html.twig', [
-            'title' => 'Liste des réservations',
-            'reservations' => $reservations
-        ]);
     }
 }
