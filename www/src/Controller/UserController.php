@@ -15,6 +15,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class UserController extends AbstractController
 {
+    // Constantes pour définir si l'utilisateur est actif ou non
+    private const ACTIVE = 1;
+    private const INACTIVE = 0;
+
     /**
      * Méthode permettant d'afficher la liste des utilisateurs
      * @Route("/", name="app_user_index", methods={"GET"})
@@ -123,18 +127,37 @@ final class UserController extends AbstractController
     }
 
     /**
-     * Méthode permettant de supprimer un utilisateur
-     * @Route("/{id}", name="app_user_delete", methods={"POST"})
+     * Méthode permettant de désactiver un utilisateur
+     * @Route("/{id}", name="app_user_desactivate", methods={"POST"})
      * @param Request $request
      * @param User $user
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('admin/client/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    #[Route('admin/client/{id}', name: 'app_user_desactivate', methods: ['POST'])]
+    public function desactivate(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($user);
+        if ($this->isCsrfTokenValid('desactivate' . $user->getId(), $request->getPayload()->getString('_token'))) {
+            $user->setIsActive(self::INACTIVE);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Méthode permettant d'activer un utilisateur
+     * @Route("/{id}/activate", name="app_user_activate", methods={"POST"})
+     * @param Request $request
+     * @param User $user
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    #[Route('admin/client/{id}/activate', name: 'app_user_activate', methods: ['POST'])]
+    public function activate(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('activate' . $user->getId(), $request->getPayload()->getString('_token'))) {
+            $user->setIsActive(self::ACTIVE);
             $entityManager->flush();
         }
 

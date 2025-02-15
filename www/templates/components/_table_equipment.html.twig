@@ -4,6 +4,7 @@
         <tr>
             <th>Id</th>
             <th>Nom</th>
+            <th>Actif</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -12,6 +13,7 @@
         <tr>
             <td>{{ equipment.id }}</td>
             <td>{{ equipment.label}}</td>
+            <td>{{ equipment.isActive ? 'Oui' : 'Non' }}</td>
             <td>
                 <div class="camping-actions">
                     <a href="{{path('app_equipment_show', {'id': equipment.id})}}" class="view-link">Voir</a>

@@ -26,7 +26,11 @@
             
             <div class="action-buttons">
                 <div>
-                    {# {% include "type/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %} #}
+                    {% if type.isActive %}
+                        {% include 'type/_desactivate_form.html.twig' %}
+                    {% else %}
+                        {% include 'type/_activate_form.html.twig' %}
+                    {% endif %}
                 </div>
                 <div>
                     <a href="{{ path('app_type_edit', {'id': type.id}) }}" class="btn btn-edit">Editer</a>

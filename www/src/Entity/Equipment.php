@@ -24,6 +24,9 @@ class Equipment
     #[ORM\ManyToMany(targetEntity: Rental::class, mappedBy: 'equipments')]
     private Collection $rentals;
 
+    #[ORM\Column]
+    private ?bool $isActive = null;
+
     public function __construct()
     {
         $this->rentals = new ArrayCollection();
@@ -69,6 +72,18 @@ class Equipment
         if ($this->rentals->removeElement($rental)) {
             $rental->removeEquipment($this);
         }
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }

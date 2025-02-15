@@ -15,6 +15,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('admin/type')]
 final class TypeController extends AbstractController
 {
+    // Constantes pour définir si le type de bien est actif ou non
+    private const ACTIVE = 1;
+    private const INACTIVE = 0;
+
     /**
      * Méthode permettant d'afficher la liste des types de bien
      * @Route("/", name="app_type_index", methods={"GET"})
@@ -152,17 +156,36 @@ final class TypeController extends AbstractController
 
     /**
      * Méthode permettant de supprimer un type de bien
-     * @Route("/{id}", name="app_type_delete", methods={"POST"})
+     * @Route("/{id}", name="app_type_desactivate", methods={"POST"})
      * @param Request $request
      * @param Type $type
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/{id}', name: 'app_type_delete', methods: ['POST'])]
-    public function delete(Request $request, Type $type, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_type_desactivate', methods: ['POST'])]
+    public function desactivate(Request $request, Type $type, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$type->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($type);
+        if ($this->isCsrfTokenValid('desactivate'.$type->getId(), $request->getPayload()->getString('_token'))) {
+            $type->setIsActive(self::INACTIVE);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Méthode permettant d'activer un type de bien
+     * @Route("/{id}/activate", name="app_type_activate", methods={"POST"})
+     * @param Request $request
+     * @param Type $type
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    #[Route('/{id}/activate', name: 'app_type_activate', methods: ['POST'])]
+    public function activate(Request $request, Type $type, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('activate'.$type->getId(), $request->getPayload()->getString('_token'))) {
+            $type->setIsActive(self::ACTIVE);
             $entityManager->flush();
         }
 

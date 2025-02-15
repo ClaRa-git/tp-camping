@@ -12,6 +12,7 @@
                 <th>Emplacement</th>
                 <th>Equipments</th>
                 <th>Propreté</th>
+                <th>Actif</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -31,6 +32,7 @@
                     {% endfor %}
                 </td>
                 <td>{{ rental.isClean ? 'Oui' : 'Non' }}</td>
+                <td>{{ rental.isActive ? 'Oui' : 'Non' }}</td>
                 <td>
                 <div class="camping-actions">
                     <a href="{{path('app_rental_show', {'id': rental.id})}}" class="view-link">Voir</a>

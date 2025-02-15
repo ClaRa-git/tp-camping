@@ -34,12 +34,21 @@
         </div>
     {% endif %}
 
-    {# Masquer si l'utilisateur qui modifie le profil est admin #}
+    {# Masquer si l'utilisateur qui modifie le profil n'est pas admin #}
     {% if is_granted('ROLE_ADMIN') %}
         <div class="form-group">
             {{ form_label(form.roles) }}
             {{ form_widget(form.roles) }}
             {{ form_errors(form.roles) }}
+        </div>
+    {% endif %}
+
+    {# Masquer si l'utilisateur qui modifie le profil n'est pas admin #}
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="form-group">
+            {{ form_label(form.isActive) }}
+            {{ form_widget(form.isActive) }}
+            {{ form_errors(form.isActive) }}
         </div>
     {% endif %}
 

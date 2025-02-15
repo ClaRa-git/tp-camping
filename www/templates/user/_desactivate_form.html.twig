@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_user_desactivate', {'id': user.id}) }}" onsubmit="">
+    <input type="hidden" name="_token" value="{{ csrf_token('desactivate' ~ user.id) }}">
+    <button class="btn btn-danger">Désactiver</button>
+</form>

@@ -50,6 +50,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             'u.lastname',
             'u.email',
             'u.roles',
+            'u.isActive',
         ])
         ->from(User::class, 'u')
         ->where('u.roles LIKE :roles')
@@ -76,6 +77,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             'u.lastname',
             'u.email',
             'u.roles',
+            'u.isActive',
         ])
         ->from(User::class, 'u')
         ->where('u.roles LIKE :roles')

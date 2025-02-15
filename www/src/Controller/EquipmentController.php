@@ -14,6 +14,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('admin/equipment')]
 final class EquipmentController extends AbstractController
 {
+    // Constantes pour définir si l'équipement est actif ou non
+    private const ACTIVE = 1;
+    private const INACTIVE = 0;
+
     /**
      * Méthode permettant d'afficher la liste des équipements
      * @Route("/", name="app_equipment_index", methods={"GET"})
@@ -96,7 +100,7 @@ final class EquipmentController extends AbstractController
     }
 
     /**
-     * Méthode permettant de supprimer un équipement
+     * Méthode permettant de désactiver un équipement
      * @Route("/{id}", name="app_equipment_delete", methods={"POST"})
      * @param Request $request
      * @param Equipment $equipment
@@ -107,7 +111,26 @@ final class EquipmentController extends AbstractController
     public function delete(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$equipment->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($equipment);
+            $equipment->setIsActive(self::INACTIVE);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Méthode permettant d'activer un équipement
+     * @Route("/{id}/activate", name="app_equipment_activate", methods={"POST"})
+     * @param Request $request
+     * @param Equipment $equipment
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    #[Route('/{id}/activate', name: 'app_equipment_activate', methods: ['POST'])]
+    public function activate(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('activate'.$equipment->getId(), $request->getPayload()->getString('_token'))) {
+            $equipment->setIsActive(self::ACTIVE);
             $entityManager->flush();
         }
 

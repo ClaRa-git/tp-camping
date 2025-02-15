@@ -20,7 +20,11 @@
 		{# Si l'utilisateur connecté est admin #}
 		{% if is_granted('ROLE_ADMIN') %}
 			<div>
-				{# {% include "user/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %} #}
+				{% if user.isActive %}
+					{{ include('user/_desactivate_form.html.twig') }}
+				{% else %}
+					{{ include('user/_active_form.html.twig') }}
+				{% endif %}
 			</div>
 		{% endif %}
 		<div>

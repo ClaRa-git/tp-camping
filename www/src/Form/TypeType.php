@@ -7,6 +7,7 @@ use App\Entity\Type;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -31,6 +32,18 @@ class TypeType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Prix du type',
                 ],
+            ])
+            ->add('isActive', ChoiceType::class, [
+                'label' => 'Actif',
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false
+                ],
+                'attr' => [
+                    'class' => 'form-control'
+                ],
+                'multiple' => false,
+                'expanded' => false
             ])
         ;
 

@@ -89,7 +89,25 @@ class UserType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => true,
-            ]);
+            ])
+            ->add('isActive', ChoiceType::class, [
+                'label' => 'Actif',
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false,
+                ],
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Merci de choisir un statut',
+                    ]),
+                ],
+                'expanded' => false,
+                'multiple' => false,
+            ])
+            ;
         }
     }
 

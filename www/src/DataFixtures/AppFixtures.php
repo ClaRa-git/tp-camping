@@ -64,7 +64,8 @@ class AppFixtures extends Fixture
                 'roles' => ['ROLE_ADMIN'],
                 'firstname' => 'Admin',
                 'lastname' => 'Admin',
-                'username' => 'administrateur'
+                'username' => 'administrateur',
+                'isActive' => true
             ],
             [
                 'email' => "john@doe.com",
@@ -72,7 +73,8 @@ class AppFixtures extends Fixture
                 'roles' => ['ROLE_USER'],
                 'firstname' => 'John',
                 'lastname' => 'Doe',
-                'username' => 'johndoe'
+                'username' => 'johndoe',
+                'isActive' => true
             ]
         ];
 
@@ -85,6 +87,7 @@ class AppFixtures extends Fixture
             $user->setFirstname($value['firstname']);
             $user->setLastname($value['lastname']);
             $user->setUsername($value['username']);
+            $user->setIsActive($value['isActive']);
 
             // Sauvegarde de l'utilisateur
             $manager->persist($user);
@@ -104,40 +107,52 @@ class AppFixtures extends Fixture
         // Création d'un tableau avec les équipements disponibles dans une location
         $array_equipments = [
             [
-                'label' => 'Climatisation / Chauffage'
+                'label' => 'Climatisation / Chauffage',
+                'isActive' => true
             ],
             [
-                'label' => 'Cuisine équipée'
+                'label' => 'Cuisine équipée',
+                'isActive' => true
             ],
             [
-                'label' => 'Télévision'
+                'label' => 'Télévision',
+                'isActive' => true
             ],
             [
-                'label' => 'Wi-Fi'
+                'label' => 'Wi-Fi',
+                'isActive' => true
             ],
             [
-                'label' => 'Proche Parking'
+                'label' => 'Proche Parking',
+                'isActive' => true
             ],
             [
-                'label' => 'Proche Piscine'
+                'label' => 'Proche Piscine',
+                'isActive' => true
             ],
             [
-                'label' => 'Animaux acceptés'
+                'label' => 'Animaux acceptés',
+                'isActive' => true
             ],
             [
-                'label' => 'Salon de jardin'
+                'label' => 'Salon de jardin',
+                'isActive' => false
             ],
             [
-                'label' => 'Terrasse'
+                'label' => 'Terrasse',
+                'isActive' => true
             ],
             [
-                'label' => 'Place ombragée'
+                'label' => 'Place ombragée',
+                'isActive' => true
             ],
             [
-                'label' => 'Borne électrique'
+                'label' => 'Borne électrique',
+                'isActive' => true
             ],
             [
-                'label' => 'Borne eau'
+                'label' => 'Borne eau',
+                'isActive' => false
             ]
         ];
 
@@ -145,6 +160,7 @@ class AppFixtures extends Fixture
         foreach ($array_equipments as $key => $value) {
             $equipment = new Equipment();
             $equipment->setLabel($value['label']);
+            $equipment->setIsActive($value['isActive']);
 
             // Sauvegarde de l'équipement
             $manager->persist($equipment);
@@ -229,32 +245,38 @@ class AppFixtures extends Fixture
             [
                 'label' => 'Emplacement nu petite taille 4 personnes',
                 'imagePath' => 'emplacement-nu-petite-taille.jpg',
-                'price' => 1000
+                'price' => 1000,
+                'isActive' => true
             ],
             [
                 'label' => 'Emplacement nu grande taille 6 personnes',
                 'imagePath' => 'emplacement-nu-grande-taille.jpg',
-                'price' => 1500
+                'price' => 1500,
+                'isActive' => true
             ],
             [
                 'label' => 'Tente meublée 2 places',
                 'imagePath' => 'tente-meublee-2-places.jpg',
-                'price' => 2000
+                'price' => 2000,
+                'isActive' => true
             ],
             [
                 'label' => 'Tente meublée 4 places',
                 'imagePath' => 'tente-meublee-4-places.jpg',
-                'price' => 2500
+                'price' => 2500,
+                'isActive' => true
             ],
             [
                 'label' => 'Mobil-home 4 places',
                 'imagePath' => 'mobil-home-4-places.jpg',
-                'price' => 3000
+                'price' => 3000,
+                'isActive' => true
             ],
             [
                 'label' => 'Mobil-home 8 places',
                 'imagePath' => 'mobil-home-8-places.jpg',
-                'price' => 3500
+                'price' => 3500,
+                'isActive' => true
             ]
         ];
 
@@ -264,6 +286,7 @@ class AppFixtures extends Fixture
             $type->setLabel($value['label']);
             $type->setImagePath($value['imagePath']);
             $type->setPrice($value['price']);
+            $type->setIsActive($value['isActive']);
 
             // Sauvegarde du type de location
             $manager->persist($type);
@@ -290,7 +313,8 @@ class AppFixtures extends Fixture
                 'location' => 1,
                 'type' => 0,
                 'equipment' => [5, 7, 10],
-                'isClean' => true
+                'isClean' => true,
+                'isActive' => true
             ],
             [
                 'title' => 'Emplacement nu grande taille 6 personnes',
@@ -300,7 +324,8 @@ class AppFixtures extends Fixture
                 'location' => 2,
                 'type' => 1,
                 'equipment' => [5, 6, 10, 11],
-                'isClean' => true
+                'isClean' => true,
+                'isActive' => true
             ],
             [
                 'title' => 'Tente meublée 2 places',
@@ -310,7 +335,8 @@ class AppFixtures extends Fixture
                 'location' => 3,
                 'type' => 2,
                 'equipment' => [5, 7, 10, 11],
-                'isClean' => true
+                'isClean' => true,
+                'isActive' => true
             ],
             [
                 'title' => 'Tente meublée 4 places',
@@ -320,7 +346,8 @@ class AppFixtures extends Fixture
                 'location' => 4,
                 'type' => 3,
                 'equipment' => [6, 7, 10, 11],
-                'isClean' => true
+                'isClean' => true,
+                'isActive' => true
             ],            
             [
                 'title' => 'Tente meublée 4 places',
@@ -330,7 +357,8 @@ class AppFixtures extends Fixture
                 'location' => 5,
                 'type' => 3,
                 'equipment' => [6, 7, 10, 11],
-                'isClean' => true
+                'isClean' => true,
+                'isActive' => false
             ],
             [
                 'title' => 'Mobil-home 4 places',
@@ -340,7 +368,8 @@ class AppFixtures extends Fixture
                 'location' => 6,
                 'type' => 4,
                 'equipment' => [0, 1, 2, 3, 6, 8],
-                'isClean' => true
+                'isClean' => true,
+                'isActive' => true
             ],
             [
                 'title' => 'Mobil-home 8 places',
@@ -350,7 +379,8 @@ class AppFixtures extends Fixture
                 'location' => 7,
                 'type' => 5,
                 'equipment' => [0, 1, 2, 3, 5, 6, 7, 8],
-                'isClean' => true
+                'isClean' => true,
+                'isActive' => true
             ]
         ];
 
@@ -364,6 +394,7 @@ class AppFixtures extends Fixture
             $rental->setLocation($value['location']);
             $rental->setType($this->getReference('type_' . $value['type']));
             $rental->setIsClean($value['isClean'] ?? false);
+            $rental->setIsActive($value['isActive']);
 
             // Boucle pour ajouter les équipements aux locations
             foreach ($value['equipment'] as $equipment) {
@@ -440,13 +471,22 @@ class AppFixtures extends Fixture
                 'kidsNumber' => 0,
                 'price' => 12800,
                 'status' => 1
-            ],
-            
+            ],            
             [
                 'rental' => 1,
                 'user' => 1,
                 'startDate' => new \DateTime('2025-05-15'),
                 'endDate' => new \DateTime('2025-05-30'),
+                'adultsNumber' => 2,
+                'kidsNumber' => 0,
+                'price' => 19200,
+                'status' => 1
+            ],
+            [
+                'rental' => 1,
+                'user' => 1,
+                'startDate' => new \DateTime('2025-05-07'),
+                'endDate' => new \DateTime('2025-05-15'),
                 'adultsNumber' => 2,
                 'kidsNumber' => 0,
                 'price' => 19200,

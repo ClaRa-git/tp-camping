@@ -34,6 +34,7 @@ class RentalRepository extends ServiceEntityRepository
             'r.surface',
             'r.location',
             'r.isClean',
+            'r.isActive',
             't.label as typeLabel',
             'e.label as equipmentLabel',
         ])
@@ -57,6 +58,7 @@ class RentalRepository extends ServiceEntityRepository
                     'surface' => $result['surface'],
                     'location' => $result['location'],
                     'isClean' => $result['isClean'],
+                    'isActive' => $result['isActive'],
                     'type' => $result['typeLabel'],
                     'equipments' => [],
                 ];
@@ -101,6 +103,7 @@ class RentalRepository extends ServiceEntityRepository
             ->from(Rental::class, 'r')
             ->join('r.type', 't')
             ->where('r.id = :id')
+            ->andWhere('r.isActive = 1')
             ->setParameter('id', $id)
             ->getQuery();
 

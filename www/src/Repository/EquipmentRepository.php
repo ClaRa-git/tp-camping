@@ -29,6 +29,7 @@ class EquipmentRepository extends ServiceEntityRepository
 
         $query = $qb->select([
             'e.label',
+            'e.isActive',
         ])
             ->from(Equipment::class, 'e')
             ->join('e.rentals', 'r')

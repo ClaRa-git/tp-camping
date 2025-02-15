@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-#[Route('/admin/reservation')]
 final class ReservationController extends AbstractController
 {
     // Constantes pour les statuts des réservations
@@ -30,7 +29,7 @@ final class ReservationController extends AbstractController
      * @param ReservationRepository $reservationRepository
      * @return Response
      */
-    #[Route(name: 'app_reservation_index', methods: ['GET'])]
+    #[Route('/admin/reservation',name: 'app_reservation_index', methods: ['GET'])]
     public function index(ReservationRepository $reservationRepository): Response
     {
         // Récupération de toutes les réservations
@@ -50,7 +49,7 @@ final class ReservationController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/reservation/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SeasonRepository $seasonRepository, AvailabilityRepository $availabilityRepository,EntityManagerInterface $entityManager): Response  
     {
         $reservation = new Reservation();
@@ -62,12 +61,19 @@ final class ReservationController extends AbstractController
             $clickedButton = $form->getClickedButton();
             $action = $clickedButton ? $clickedButton->getName() : null;
 
-            // Récupération des dates
+            // Récupération des données du formulaire
             $dateStart = $form->get('dateStart')->getData();
             $dateEnd = $form->get('dateEnd')->getData();
             $rental = $form->get('rental')->getData();
+            $isActive = $form->get('isActive')->getData();
             $seasonsClosed = $seasonRepository->findSeasonsClosed();
             $availabilities = $availabilityRepository->findAvailabilitiesByRental($rental->getId());
+
+            // On vérifie si le locatif est actif
+            if (!$isActive) {
+                $this->addFlash('danger', 'Le locatif est inactif !');
+                return $this->redirectToRoute('app_reservation_new');
+            }
 
             // On vérifie si le camping est ouvert à ces dates
             foreach ($seasonsClosed as $season) {
@@ -168,7 +174,7 @@ final class ReservationController extends AbstractController
      * @param Reservation $reservation
      * @return Response
      */
-    #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
+    #[Route('/admin/reservation/{id}', name: 'app_reservation_show', methods: ['GET'])]
     public function show(Reservation $reservation, UserRepository $userRepository): Response
     {
         if (!$reservation) {
@@ -191,7 +197,7 @@ final class ReservationController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
+    #[Route('/admin/reservation/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         if (!$reservation) {
@@ -220,7 +226,7 @@ final class ReservationController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
+    #[Route('/admin/reservation/{id}', name: 'app_reservation_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         if (!$reservation) {
@@ -235,13 +241,35 @@ final class ReservationController extends AbstractController
     }
 
     /**
+     * Méthode permettant de réactiver une réservation
+     * @Route("/admin/{id}/activate", name="app_reservation_activate", methods={"POST"})
+     * @param Request $request
+     * @param Reservation $reservation
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    #[Route('/admin/reservation/{id}/activate', name: 'app_reservation_activate', methods: ['POST'])]
+    public function activate(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    {
+        if (!$reservation) {
+            throw new NotFoundHttpException('Réservation non trouvée');
+        }
+        if ($this->isCsrfTokenValid('activate'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+            $reservation->setStatus(self::STATUS_CONFIRMED);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
      * Méthode permettant d'afficher la liste des réservations par filtre
      * @Route("/filter/{filter}", name="app_reservation_filter", methods={"GET"})
      * @param ReservationRepository $reservationRepository
      * @param string $filter
      * @return Response
      */
-    #[Route('/filter/{filter}', name: 'app_reservation_filter', methods: ['GET'])]
+    #[Route('/admin/reservation/filter/{filter}', name: 'app_reservation_filter', methods: ['GET'])]
     public function filter(ReservationRepository $reservationRepository, string $filter): Response
     {
         $reservations = $reservationRepository->getReservationsByFilter($filter);
@@ -258,14 +286,15 @@ final class ReservationController extends AbstractController
      * @param ReservationRepository $reservationRepository
      * @return JsonResponse
      */
-    #[Route('/api/test', name: 'app_reservation_json', methods: ['GET'])]
+    #[Route('/reservation/api/js', name: 'app_reservation_json', methods: ['GET'])]
     public function getTodayReservations(ReservationRepository $reservationRepository): JsonResponse
     {        
         //$date = new \DateTime();
         $date = new \DateTime('2025-05-15');
-        $reservations = $reservationRepository->findByDate($date);
+        $reservationStart = $reservationRepository->findByDateStart($date);
+        $reservationEnd = $reservationRepository->findByDateEnd($date);
     
-        return new JsonResponse($reservations);
+        return new JsonResponse([$reservationStart, $reservationEnd]);
     }
 
     /**

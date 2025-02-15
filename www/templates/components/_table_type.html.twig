@@ -7,6 +7,7 @@
                 <th>Image</th>
                 <th>Nom</th>
                 <th>Prix / jour</th>
+                <th>Actif</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -17,6 +18,7 @@
                 <td><img src="{{asset('images/types/' ~ type.imagePath)}}" alt="{{type.label}}" class="camping-image-admin"></td>
                 <td>{{ type.label }}</td>
                 <td>{{ (type.price/100)|number_format}}</td>
+                <td>{{ type.isActive ? 'Oui' : 'Non' }}</td>
                 <td>
                 <div class="camping-actions">
                     <a href="{{path('app_type_show', {'id': type.id})}}" class="view-link">Voir</a>

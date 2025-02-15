@@ -46,7 +46,11 @@
             </div>	
             <div class="action-buttons">
                 <div>
-                    <a href="{{ path('app_type_edit', {'id': type.id}) }}" class="btn btn-edit">Editer</a>
+                    {% if rental.isActive %}
+                        {% include 'rental/_desactivate_form.html.twig' %}
+                    {% else %}
+                        {% include 'rental/_activate_form.html.twig' %}
+                    {% endif %}
                 </div>
                 <div>
                     <a href="{{path('app_admin_dashboard', {'id':rental.type.id})}}" class="btn btn-back">

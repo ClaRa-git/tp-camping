@@ -26,9 +26,17 @@ class HomeController extends AbstractController
         // Récupérations des locations
         $types = $typeRepository->findAll();
 
+        // On ne récupère que les types actifs
+        $typesAvailable = [];
+        foreach ($types as $type) {
+            if ($type->isActive()) {
+                $typesAvailable[] = $type;
+            }
+        }
+
         return $this->render('home/index.html.twig', [
             'title' => $title,
-            'types' => $types
+            'types' => $typesAvailable
         ]);
     }
 
@@ -52,10 +60,18 @@ class HomeController extends AbstractController
         // Récupération des locations
         $rentals = $rentalRepository->findBy(['type' => $type]);
 
+        // On ne récupère que les locations actives
+        $rentalsAvailable = [];
+        foreach ($rentals as $rental) {
+            if ($rental->isActive()) {
+                $rentalsAvailable[] = $rental;
+            }
+        }
+
         return $this->render('home/detail_type.html.twig', [
             'title' => $title,
             'type' => $type,
-            'rentals' => $rentals
+            'rentals' => $rentalsAvailable
         ]);
     }
 
@@ -78,12 +94,20 @@ class HomeController extends AbstractController
         // Récupération des équipements
         $equipments = $equipmentRepository->getEquipmentsForRental($id);
 
+        // On ne récupère que les équipements actifs
+        $equipmentsAvailable = [];
+        foreach ($equipments as $equipment) {
+            if ($equipment['isActive'] == 1) {
+                $equipmentsAvailable[] = $equipment;
+            }
+        }
+
         // Titre de la page
         $title = "Découvrez notre location " . $rental->getTitle();
 
         return $this->render('home/detail_rental.html.twig', [
             'title' => $title,
-            'equipments' => $equipments,
+            'equipments' => $equipmentsAvailable,
             'rental' => $rental,
             'type' => $type
         ]);

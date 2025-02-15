@@ -16,6 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('admin/rental')]
 final class RentalController extends AbstractController
 {
+    // Constantes pour définir si la location est active ou non
+    private const ACTIVE = 1;
+    private const INACTIVE = 0;
+
     /**
      * Méthode permettant d'afficher la liste des locations
      * @Route("/", name="app_rental_index", methods={"GET"})
@@ -48,6 +52,23 @@ final class RentalController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // On vérifie si le type de location est activé
+            $type = $form->get('type')->getData();
+            if ($type->getIsActive() === self::INACTIVE) {
+                $this->addFlash('danger', 'Le type de location sélectionné est désactivé');
+                return $this->redirectToRoute('app_rental_new');
+            }
+
+            // On vérifie si les équipements sont activés
+            $equipments = $form->get('equipments')->getData();
+            foreach ($equipments as $equipment) {
+                if ($equipment->getIsActive() === self::INACTIVE) {
+                    $this->addFlash('danger', 'Un des équipements sélectionné est désactivé');
+                    return $this->redirectToRoute('app_rental_new');
+                }
+            }
+            
             $entityManager->persist($rental);
             $entityManager->flush();
 
@@ -116,11 +137,30 @@ final class RentalController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/{id}', name: 'app_rental_delete', methods: ['POST'])]
-    public function delete(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_rental_desactivate', methods: ['POST'])]
+    public function desactivate(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$rental->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($rental);
+        if ($this->isCsrfTokenValid('desactivate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
+            $rental->setIsActive(self::INACTIVE);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_rental_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Méthode permettant d'activer une location
+     * @Route("/{id}/activate", name="app_rental_activate", methods={"POST"})
+     * @param Request $request
+     * @param Rental $rental
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    #[Route('/{id}/activate', name: 'app_rental_activate', methods: ['POST'])]
+    public function activate(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('activate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
+            $rental->setIsActive(self::ACTIVE);
             $entityManager->flush();
         }
 

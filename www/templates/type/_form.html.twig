@@ -31,6 +31,12 @@
         {{ form_errors(form.price) }}
     </div>
 
+    <div class="form-group">
+        {{ form_label(form.isActive) }}
+        {{ form_widget(form.isActive) }}
+        {{ form_errors(form.isActive) }}
+    </div>
+
     <button type="submit" class="btn-submit">
         <i class="fas fa-save"></i>
         {{ button_label|default('Enregistrer') }}

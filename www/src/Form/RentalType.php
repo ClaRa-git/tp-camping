@@ -84,6 +84,18 @@ class RentalType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
+            ->add('isActive', ChoiceType::class, [
+                'label' => 'Location active ?',
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false
+                ],
+                'expanded' => false,
+                'multiple' => false,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
+            ])
         ;
     }
 
