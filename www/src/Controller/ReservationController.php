@@ -313,19 +313,28 @@ final class ReservationController extends AbstractController
         // On récupère les saisons qui chevauchent la réservation
         $seasons = $seasonRepository->findSeasonsBetweenDates($dateStart, $dateEnd);
 
-        foreach ($seasons as $season) {
-            // On détermine la période de la saison qui chevauche la réservation
-            // Pour avoir le nombre de jours correct de la période on met le temps à 0
-            $start = $dateStart > $season->getDateStart()->setTime(0,0,0) ? $dateStart : $season->getDateStart()->setTime(0,0,0);
-            $end = $dateEnd < $season->getDateEnd()->setTime(0,0,0) ? $dateEnd : $season->getDateEnd()->setTime(0,0,0);
-
-            // On calcule le nombre de jours de la période
-            $days = $start->diff($end)->days + 1;
-
-            // On calcule le prix total de la réservation
-            $total += ($days * $season->getPercentage() * $reservation->getRental()->getType()->getPrice())/100;
+        // Si pas de saison trouvée, on calcule le prix sans saison
+        if (empty($seasons)) {
+            $days = $dateStart->diff($dateEnd)->days + 1;
+            $total = ($days * $reservation->getRental()->getType()->getPrice());
         }
-
+        else
+        {
+            foreach ($seasons as $season) {
+                // On détermine la période de la saison qui chevauche la réservation
+                // Pour avoir le nombre de jours correct de la période on met le temps à 0
+                $start = $dateStart > $season->getDateStart()->setTime(0,0,0) ? $dateStart : $season->getDateStart()->setTime(0,0,0);
+                $end = $dateEnd < $season->getDateEnd()->setTime(0,0,0) ? $dateEnd : $season->getDateEnd()->setTime(0,0,0);
+    
+                // On calcule le nombre de jours de la période
+                $days = $start->diff($end)->days + 1;
+    
+                // On calcule le prix total de la réservation
+                $total += ($days * $season->getPercentage() * $reservation->getRental()->getType()->getPrice())/100;
+            }
+    
+        }
+        
         return $total;
     }
 }

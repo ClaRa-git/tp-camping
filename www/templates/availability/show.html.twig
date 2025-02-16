@@ -30,7 +30,7 @@
 
             <div class="action-buttons">
                 <div>
-                    {# {% include "availability/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %} #}
+                    {% include "availability/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
                 </div>
                 <div>
                     <a href="{{ path('app_availability_edit', {'id': availability.id}) }}" class="btn btn-edit">Editer</a>
