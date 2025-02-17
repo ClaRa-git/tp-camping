@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('admin/availability')]
@@ -50,6 +51,7 @@ final class AvailabilityController extends AbstractController
             $entityManager->persist($availability);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Non disponibilité crée avec succès !');
             return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -68,6 +70,10 @@ final class AvailabilityController extends AbstractController
     #[Route('/{id}', name: 'app_availability_show', methods: ['GET'])]
     public function show(Availability $availability, RentalRepository $rentalRepository): Response
     {
+        if (!$availability) {
+            throw new NotFoundHttpException('Non disponibilité non trouvée');
+        }
+
         // On récupère le bien associé à la disponibilité
         $rental = $rentalRepository->find($availability->getRental()->getId());
 
@@ -88,12 +94,17 @@ final class AvailabilityController extends AbstractController
     #[Route('/{id}/edit', name: 'app_availability_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Availability $availability, EntityManagerInterface $entityManager): Response
     {
+        if (!$availability) {
+            throw new NotFoundHttpException('Non disponibilité non trouvée');
+        }
+
         $form = $this->createForm(AvailabilityType::class, $availability);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'Non disponibilité modifiée avec succès !');
             return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -114,9 +125,15 @@ final class AvailabilityController extends AbstractController
     #[Route('/{id}', name: 'app_availability_delete', methods: ['POST'])]
     public function delete(Request $request, Availability $availability, EntityManagerInterface $entityManager): Response
     {
+        if (!$availability) {
+            throw new NotFoundHttpException('Non disponibilité non trouvée');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$availability->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($availability);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Non disponibilité supprimée avec succès !');
         }
 
         return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);

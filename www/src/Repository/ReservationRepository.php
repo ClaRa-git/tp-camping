@@ -147,9 +147,9 @@ class ReservationRepository extends ServiceEntityRepository
             't.label as type',
             'r.dateStart',
             'r.dateEnd',
-            'r.status',
             're.title as room',
             're.location',
+            're.isClean',
             'u.firstname',
             'u.lastname'
         ])
@@ -187,9 +187,9 @@ class ReservationRepository extends ServiceEntityRepository
            't.label as type',
            'r.dateStart',
            'r.dateEnd',
-           'r.status',
            're.title as room',
            're.location',
+           're.isClean',
            'u.firstname',
            'u.lastname'
        ])

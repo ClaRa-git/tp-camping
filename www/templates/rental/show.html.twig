@@ -39,6 +39,10 @@
                     <span class="info-label">Prix moyen :</span>
                     <span class="info-value">{{(rental.type.price/100)|number_format}} / jour</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Activée :</span>
+                    <span class="info-value">{{rental.isActive ? 'Oui' : 'Non'}}</span>
+                </div>
             </div>
 			<div class="camping-synopsis mb-4">
 				<h2>Description</h2>

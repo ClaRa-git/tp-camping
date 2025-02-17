@@ -143,6 +143,8 @@ final class ReservationController extends AbstractController
 
             // On vérifie si l'action est de calculer le prix ou de confirmer la réservation
             if ($action === 'calculate') {
+                $this->addFlash('success', 'Prix calculé avec succès !');
+
                 // Affichage du prix sans enregistrement
                 return $this->render('reservation/admin/new.html.twig', [
                     'reservation' => $reservation,
@@ -209,6 +211,7 @@ final class ReservationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'Réservation modifiée avec succès !');
             return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -237,6 +240,7 @@ final class ReservationController extends AbstractController
             $entityManager->flush();
         }
 
+        $this->addFlash('success', 'Réservation annulée avec succès !');
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
     }
 
@@ -257,6 +261,8 @@ final class ReservationController extends AbstractController
         if ($this->isCsrfTokenValid('activate'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
             $reservation->setStatus(self::STATUS_CONFIRMED);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Réservation réactivée avec succès !');
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);

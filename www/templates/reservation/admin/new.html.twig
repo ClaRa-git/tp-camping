@@ -5,12 +5,6 @@
 {% block body %}
     <h1>Créer une nouvelle réservation</h1>
 
-    {% for message in app.flashes('danger') %}
-        <div class="alert alert-danger">
-            {{ message }}
-        </div>
-    {% endfor %}
-
     {{ include('reservation/admin/_form.html.twig') }}
 
     <div class="action-buttons">

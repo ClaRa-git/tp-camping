@@ -46,6 +46,7 @@ final class SeasonController extends AbstractController
             $entityManager->persist($season);
             $entityManager->flush();
 
+            $this->addFlash('success', 'La saison a bien été créée.');
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -64,6 +65,10 @@ final class SeasonController extends AbstractController
     #[Route('/{id}', name: 'app_season_show', methods: ['GET'])]
     public function show(Season $season): Response
     {
+        if (!$season) {
+            throw $this->createNotFoundException('La saison demandée n\'existe pas.');
+        }
+
         return $this->render('season/show.html.twig', [
             'season' => $season,
         ]);
@@ -80,12 +85,17 @@ final class SeasonController extends AbstractController
     #[Route('/{id}/edit', name: 'app_season_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Season $season, EntityManagerInterface $entityManager): Response
     {
+        if (!$season) {
+            throw $this->createNotFoundException('La saison demandée n\'existe pas.');
+        }
+
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'La saison a bien été modifiée.');
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -106,9 +116,15 @@ final class SeasonController extends AbstractController
     #[Route('/{id}', name: 'app_season_delete', methods: ['POST'])]
     public function delete(Request $request, Season $season, EntityManagerInterface $entityManager): Response
     {
+        if (!$season) {
+            throw $this->createNotFoundException('La saison demandée n\'existe pas.');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$season->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($season);
             $entityManager->flush();
+
+            $this->addFlash('success', 'La saison a bien été supprimée.');
         }
 
         return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);

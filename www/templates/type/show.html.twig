@@ -22,6 +22,10 @@
                     <span class="info-label">Prix : </span>
                     <span class="info-value">{{(type.price/100)|number_format}}</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Activé : </span>
+                    <span class="info-value">{{type.isActive ? 'Oui' : 'Non'}}</span>
+                </div>
             </div>
             
             <div class="action-buttons">

@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('admin/equipment')]
@@ -50,6 +51,7 @@ final class EquipmentController extends AbstractController
             $entityManager->persist($equipment);
             $entityManager->flush();
 
+            $this->addFlash('success', 'L\'équipement a été ajouté avec succès');
             return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -68,6 +70,10 @@ final class EquipmentController extends AbstractController
     #[Route('/{id}', name: 'app_equipment_show', methods: ['GET'])]
     public function show(Equipment $equipment): Response
     {
+        if (!$equipment) {
+            throw new NotFoundHttpException('Equipement non trouvée');
+        }
+
         return $this->render('equipment/show.html.twig', [
             'equipment' => $equipment,
         ]);
@@ -84,12 +90,17 @@ final class EquipmentController extends AbstractController
     #[Route('/{id}/edit', name: 'app_equipment_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
     {
+        if (!$equipment) {
+            throw new NotFoundHttpException('Equipement non trouvée');
+        }
+
         $form = $this->createForm(EquipmentType::class, $equipment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'L\'équipement a été modifié avec succès');
             return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -101,18 +112,24 @@ final class EquipmentController extends AbstractController
 
     /**
      * Méthode permettant de désactiver un équipement
-     * @Route("/{id}", name="app_equipment_delete", methods={"POST"})
+     * @Route("/{id}", name="app_equipment_desactivate", methods={"POST"})
      * @param Request $request
      * @param Equipment $equipment
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/{id}', name: 'app_equipment_delete', methods: ['POST'])]
-    public function delete(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_equipment_desactivate', methods: ['POST'])]
+    public function desactivate(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$equipment->getId(), $request->getPayload()->getString('_token'))) {
+        if (!$equipment) {
+            throw new NotFoundHttpException('Equipement non trouvée');
+        }
+
+        if ($this->isCsrfTokenValid('desactivate'.$equipment->getId(), $request->getPayload()->getString('_token'))) {
             $equipment->setIsActive(self::INACTIVE);
             $entityManager->flush();
+
+            $this->addFlash('success', 'L\'équipement a été désactivé avec succès');
         }
 
         return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
@@ -129,9 +146,15 @@ final class EquipmentController extends AbstractController
     #[Route('/{id}/activate', name: 'app_equipment_activate', methods: ['POST'])]
     public function activate(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
     {
+        if (!$equipment) {
+            throw new NotFoundHttpException('Non disponibilité non trouvée');
+        }
+
         if ($this->isCsrfTokenValid('activate'.$equipment->getId(), $request->getPayload()->getString('_token'))) {
             $equipment->setIsActive(self::ACTIVE);
             $entityManager->flush();
+
+            $this->addFlash('success', 'L\'équipement a été activé avec succès');
         }
 
         return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);

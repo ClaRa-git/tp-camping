@@ -7,12 +7,6 @@
 
     <h2>{{ rental.title }} n°{{ rental.location }}</h2>
 
-    {% for message in app.flashes('danger') %}
-        <div class="alert alert-danger">
-            {{ message }}
-        </div>
-    {% endfor %}
-
     {{ include('reservation/client/_form.html.twig') }}
 
     <div class="action-buttons">

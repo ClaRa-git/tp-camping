@@ -64,6 +64,12 @@ class ReservationClientController extends AbstractController
         // On affecte la location à la réservation
         $rental = $rentalRepository->find($id);
 
+        // Si le locatif n'existe pas, on redirige vers la page d'accueil
+        if (!$rental) {
+            $this->addFlash('danger', 'Le locatif n\'existe pas !');
+            return $this->redirectToRoute('app_home');
+        }
+
         if ($form->isSubmitted()) {
             // Vérification du bouton cliqué
             $clickedButton = $form->getClickedButton();
@@ -161,6 +167,8 @@ class ReservationClientController extends AbstractController
 
             // Si le bouton cliqué est "Calculer"
             if ($action === 'calculate') {
+                $this->addFlash('success', 'Prix calculé avec succès !');
+
                 // Affichage du prix sans enregistrement
                 return $this->render('reservation/client/new.html.twig', [
                     'reservation' => $reservation,
@@ -197,6 +205,10 @@ class ReservationClientController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_client_show', methods: ['GET'])]
     public function show(Reservation $reservation, UserRepository $userRepository): Response
     {
+        if (!$reservation) {
+            throw $this->createNotFoundException('La réservation n\'existe pas !');
+        }
+
         $isCancelable = false;
 
         // On vérifie si la réservation est annulable
@@ -224,6 +236,10 @@ class ReservationClientController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_client_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
+        if (!$reservation) {
+            throw $this->createNotFoundException('La réservation n\'existe pas !');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
             $reservation->setStatus(self::STATUS_REFUSED);
             $entityManager->flush();

@@ -12,6 +12,8 @@
                     <span class="info-label">Nom : </span>
                     </span>
                     <span class="info-value">{{equipment.label}}</span>
+					<span class="info-label">Activé :</span>
+					<span class="info-value">{{equipment.isActive ? 'Oui' : 'Non' }}</span>
                 </div>
 			</div>
 		</div>
@@ -19,7 +21,13 @@
 
     <div class="action-buttons">
 		<div>
-			{# {% include "equipment/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %} #}
+			<div>
+				{% if equipment.isActive %}
+					{% include 'equipment/_desactivate_form.html.twig' %}
+				{% else %}
+					{% include 'equipment/_activate_form.html.twig' %}
+				{% endif %}
+			</div>
 		</div>
 		<div>
 			<a href="{{ path('app_equipment_edit', {'id': equipment.id}) }}" class="btn btn-edit">Editer</a>

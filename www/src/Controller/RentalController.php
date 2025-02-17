@@ -72,6 +72,7 @@ final class RentalController extends AbstractController
             $entityManager->persist($rental);
             $entityManager->flush();
 
+            $this->addFlash('success', 'La location a bien été créée');
             return $this->redirectToRoute('app_rental_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -90,6 +91,10 @@ final class RentalController extends AbstractController
     #[Route('/{id}', name: 'app_rental_show', methods: ['GET'])]
     public function show(Rental $rental, TypeRepository $typeRepository, EquipmentRepository $equipmentRepository): Response
     {
+        if (!$rental) {
+            throw $this->createNotFoundException('La location n\'existe pas');
+        }
+
         // On récupère le type de la location
         $type = $typeRepository->findOneBy(['id' => $rental->getType()]);
 
@@ -114,12 +119,17 @@ final class RentalController extends AbstractController
     #[Route('/{id}/edit', name: 'app_rental_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
     {
+        if (!$rental) {
+            throw $this->createNotFoundException('La location n\'existe pas');
+        }
+
         $form = $this->createForm(RentalType::class, $rental);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'La location a bien été modifiée');
             return $this->redirectToRoute('app_rental_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -143,6 +153,8 @@ final class RentalController extends AbstractController
         if ($this->isCsrfTokenValid('desactivate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
             $rental->setIsActive(self::INACTIVE);
             $entityManager->flush();
+
+            $this->addFlash('success', 'La location a bien été désactivée');
         }
 
         return $this->redirectToRoute('app_rental_index', [], Response::HTTP_SEE_OTHER);
@@ -162,6 +174,8 @@ final class RentalController extends AbstractController
         if ($this->isCsrfTokenValid('activate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
             $rental->setIsActive(self::ACTIVE);
             $entityManager->flush();
+
+            $this->addFlash('success', 'La location a bien été activée');
         }
 
         return $this->redirectToRoute('app_rental_index', [], Response::HTTP_SEE_OTHER);
