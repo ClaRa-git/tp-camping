@@ -119,6 +119,9 @@ final class UserController extends AbstractController
         $form = $this->createForm(UserType::class, $user, ['is_edit' => true, 'is_admin' => $is_admin]);
         $form->handleRequest($request);
 
+        // Récupération des rôles sélectionnés
+        $user->setRoles(array_values($form->get('roles')->getData()));
+
         // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
             // Enregistrement de la modification de l'utilisateur

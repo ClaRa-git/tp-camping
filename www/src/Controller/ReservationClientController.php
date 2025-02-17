@@ -96,7 +96,7 @@ class ReservationClientController extends AbstractController
 
             // Vérification de la fermeture du camping à ces dates
             foreach ($seasonsClosed as $season) {
-                if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateStart()) ||  ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateEnd())) {
+                if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateEnd()) ||  ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateStart())) {
                     // Message d'erreur
                     $this->addFlash('danger', 'Le camping est fermé du ' . $season->getDateStart()->format('d/m/Y') . ' au ' . $season->getDateEnd()->format('d/m/Y') . ' !');
                     
@@ -149,8 +149,8 @@ class ReservationClientController extends AbstractController
             // Vérification de si le locatif est disponible à ces dates (disponibilités)
             if(!empty($availabilities)){
                 foreach ($availabilities as $availability) {
-                    if (($dateStart >= $availability['dateStart']->setTime(0,0,0) && $dateStart <= $availability['dateEnd']->setTime(0,0,0)) || 
-                        ($dateEnd >= $availability['dateStart']->setTime(0,0,0) && $dateEnd <= $availability['dateEnd']->setTime(0,0,0))) {
+                    if (($dateStart >= $availability['dateStart'] && $dateStart <= $availability['dateEnd']) || 
+                        ($dateEnd >= $availability['dateStart'] && $dateEnd <= $availability['dateEnd'])) {
                             // Message d'erreur
                             $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
                         
@@ -193,6 +193,7 @@ class ReservationClientController extends AbstractController
                 // Affichage du prix sans enregistrement
                 return $this->render('reservation/client/new.html.twig', [
                     'reservation' => $reservation,
+                    'rental' => $rental,
                     'form' => $form->createView(),
                     'price' => $totalPrice // Envoi du prix au template
                 ]);

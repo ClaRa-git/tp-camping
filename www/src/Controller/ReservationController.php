@@ -85,8 +85,8 @@ final class ReservationController extends AbstractController
 
             // vérification de si le camping est ouvert à ces dates
             foreach ($seasonsClosed as $season) {
-                if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateStart()->setTime(0,0,0)) ||  
-                ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateEnd())) {
+                if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateEnd()) ||  
+                ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateStart())) {
                     // Message d'erreur
                     $this->addFlash('danger', 'Le camping est fermé du ' . $season->getDateStart()->format('d/m/Y') . ' au ' . $season->getDateEnd()->format('d/m/Y') . ' !');
                     

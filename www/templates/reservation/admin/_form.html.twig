@@ -51,9 +51,12 @@
     </div>
 
     {# Bouton pour confirmer la réservation (affiché seulement si le prix est défini) #}
-    <div class="form-group">
-        {{ form_label(form.confirm) }}
-        {{ form_widget(form.confirm) }}
-    </div>
+    {# Bouton pour confirmer la réservation (affiché seulement si le prix est défini) #}
+    {% if price is defined %}
+        <div class="form-group">
+            {{ form_label(form.confirm) }}
+            {{ form_widget(form.confirm) }}
+        </div>
+    {% endif %}
 
 {{ form_end(form) }}
