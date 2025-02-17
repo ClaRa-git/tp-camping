@@ -252,14 +252,14 @@ class ReservationClientController extends AbstractController
 
     /**
      * Méthode qui permet d'annuler une réservation
-     * @Route("/{id}", name="app_reservation_delete", methods={"POST"})
+     * @Route("/{id}", name="app_reservation_cancel", methods={"POST"})
      * @param Request $request
      * @param Reservation $reservation
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/{id}', name: 'app_reservation_client_delete', methods: ['POST'])]
-    public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_reservation_client_cancel', methods: ['POST'])]
+    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la réservation
         if (!$reservation) {
@@ -267,7 +267,7 @@ class ReservationClientController extends AbstractController
         }
 
         // Vérification du token CSRF
-        if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('cancel'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
             // Annulation de la réservation
             $reservation->setStatus(self::STATUS_REFUSED);
             $entityManager->flush();

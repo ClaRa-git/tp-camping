@@ -94,8 +94,20 @@ final class UserController extends AbstractController
      * @return Response
      */
     #[Route('/client/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): Response
+    public function show(int $id, UserRepository $userRepository): Response
     {
+        // Vérification de l'existence de l'utilisateur
+        $user = $userRepository->find($id);
+
+        if (!$user) {
+            return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
+        }
+
+        // Si l'id ne correspond pas à l'id de l'utilisateur connecté, redirection vers la page de profil de l'utilisateur connecté
+        if ($user->getId() !== $this->getUser()->getId() && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
@@ -110,8 +122,20 @@ final class UserController extends AbstractController
      * @return Response
      */
     #[Route('/client/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de l'utilisateur
+        $user = $userRepository->find($id);
+
+        if (!$user) {
+            return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
+        }
+
+        // Si l'id ne correspond pas à l'id de l'utilisateur connecté, redirection vers la page de profil de l'utilisateur connecté
+        if ($user->getId() !== $this->getUser()->getId() && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
+        }
+
         // Vérification si l'utilisateur connecté est un admin
         $is_admin = in_array('ROLE_ADMIN', $this->getUser()->getRoles());
 
@@ -120,7 +144,7 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         // Récupération des rôles sélectionnés
-        $user->setRoles(array_values($form->get('roles')->getData()));
+        $user->setRoles(array_values($form->getData()->getRoles()));
 
         // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {

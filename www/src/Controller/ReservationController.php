@@ -260,14 +260,14 @@ final class ReservationController extends AbstractController
 
     /**
      * Méthode qui permet d'annuler une réservation
-     * @Route("/admin/{id}", name="app_reservation_delete", methods={"POST"})
+     * @Route("/admin/{id}", name="app_reservation_cancel", methods={"POST"})
      * @param Request $request
      * @param Reservation $reservation
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    #[Route('/admin/reservation/{id}', name: 'app_reservation_delete', methods: ['POST'])]
-    public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    #[Route('/admin/reservation/{id}', name: 'app_reservation_cancel', methods: ['POST'])]
+    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la réservation
         if (!$reservation) {
@@ -275,7 +275,7 @@ final class ReservationController extends AbstractController
         }
 
         // Vérification du jeton CSRF
-        if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('cancel'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
             // Annulation de la réservation
             $reservation->setStatus(self::STATUS_REFUSED);
             $entityManager->flush();
@@ -283,34 +283,6 @@ final class ReservationController extends AbstractController
 
         // Message de succès
         $this->addFlash('success', 'Réservation annulée avec succès !');
-
-        return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    /**
-     * Méthode permettant de réactiver une réservation
-     * @Route("/admin/{id}/activate", name="app_reservation_activate", methods={"POST"})
-     * @param Request $request
-     * @param Reservation $reservation
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    #[Route('/admin/reservation/{id}/activate', name: 'app_reservation_activate', methods: ['POST'])]
-    public function activate(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
-    {
-        // Vérification de l'existence de la réservation
-        if (!$reservation) {
-            throw new NotFoundHttpException('Réservation non trouvée');
-        }
-
-        // Vérification du jeton CSRF
-        if ($this->isCsrfTokenValid('activate'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
-            // Réactivation de la réservation
-            $reservation->setStatus(self::STATUS_CONFIRMED);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Réservation réactivée avec succès !');
-        }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="">
+    <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+    <button class="btn btn-danger">Annuler</button>
+</form>

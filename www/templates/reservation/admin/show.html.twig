@@ -55,12 +55,10 @@
             </div>
             
             <div class="action-buttons">
-                <div>
-                    {% include "reservation/admin/_delete_form.html.twig" with {'button_class': 'btn btn-delete'} %}
-                </div>
-                <div>
-                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" class="btn btn-edit">Editer</a>
-                </div>
+                {# Si la réservation est validée, on affiche le bouton pour annuler la réservation #}
+                {% if reservation.status %}
+                    {% include 'reservation/admin/_cancel_form.html.twig' %}  
+                {% endif %}
                 <div>
                     <a href="{{path('app_reservation_index')}}" class="btn btn-back">
                         <i class="fas fa-arrow-left"></i>Retour à la liste</a>
