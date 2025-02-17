@@ -417,7 +417,6 @@ class AppFixtures extends Fixture
     public function loadAvailabilities(ObjectManager $manager): void
     {
         // Création de tableaux avec les disponibilités
-
         $array_availabilities = [
             [
                 'rental' => 0,

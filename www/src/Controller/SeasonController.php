@@ -38,15 +38,22 @@ final class SeasonController extends AbstractController
     #[Route('/new', name: 'app_season_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Création d'une nouvelle saison
         $season = new Season();
+
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
+        // Vérification de la validité du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de la saison en base de données
             $entityManager->persist($season);
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'La saison a bien été créée.');
+
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -65,6 +72,7 @@ final class SeasonController extends AbstractController
     #[Route('/{id}', name: 'app_season_show', methods: ['GET'])]
     public function show(Season $season): Response
     {
+        // Vérification de l'existence de la saison
         if (!$season) {
             throw $this->createNotFoundException('La saison demandée n\'existe pas.');
         }
@@ -85,17 +93,23 @@ final class SeasonController extends AbstractController
     #[Route('/{id}/edit', name: 'app_season_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Season $season, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la saison
         if (!$season) {
             throw $this->createNotFoundException('La saison demandée n\'existe pas.');
         }
 
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
+        // Vérification de la validité du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de la saison en base de données
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'La saison a bien été modifiée.');
+
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -116,11 +130,14 @@ final class SeasonController extends AbstractController
     #[Route('/{id}', name: 'app_season_delete', methods: ['POST'])]
     public function delete(Request $request, Season $season, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la saison
         if (!$season) {
             throw $this->createNotFoundException('La saison demandée n\'existe pas.');
         }
 
+        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('delete'.$season->getId(), $request->getPayload()->getString('_token'))) {
+            // Suppression de la saison
             $entityManager->remove($season);
             $entityManager->flush();
 

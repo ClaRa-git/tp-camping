@@ -25,7 +25,7 @@ final class AvailabilityController extends AbstractController
     #[Route(name: 'app_availability_index', methods: ['GET'])]
     public function index(AvailabilityRepository $availabilityRepository): Response
     {
-        // On récupère toutes les non disponibilités
+        // Récupèration toutes les non disponibilités
         $availabilities = $availabilityRepository->getAllInfos();
 
         return $this->render('availability/index.html.twig', [
@@ -43,15 +43,22 @@ final class AvailabilityController extends AbstractController
     #[Route('/new', name: 'app_availability_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Création une nouvelle non disponibilité
         $availability = new Availability();
+
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(AvailabilityType::class, $availability);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de la non disponibilité
             $entityManager->persist($availability);
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'Non disponibilité crée avec succès !');
+
             return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -70,11 +77,12 @@ final class AvailabilityController extends AbstractController
     #[Route('/{id}', name: 'app_availability_show', methods: ['GET'])]
     public function show(Availability $availability, RentalRepository $rentalRepository): Response
     {
+        // Vérification de l'existence de la non disponibilité
         if (!$availability) {
             throw new NotFoundHttpException('Non disponibilité non trouvée');
         }
 
-        // On récupère le bien associé à la disponibilité
+        // Récupération de la location par son ID
         $rental = $rentalRepository->find($availability->getRental()->getId());
 
         return $this->render('availability/show.html.twig', [
@@ -94,17 +102,23 @@ final class AvailabilityController extends AbstractController
     #[Route('/{id}/edit', name: 'app_availability_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Availability $availability, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la non disponibilité
         if (!$availability) {
             throw new NotFoundHttpException('Non disponibilité non trouvée');
         }
 
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(AvailabilityType::class, $availability);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de la modification de la non disponibilité
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'Non disponibilité modifiée avec succès !');
+
             return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -125,14 +139,18 @@ final class AvailabilityController extends AbstractController
     #[Route('/{id}', name: 'app_availability_delete', methods: ['POST'])]
     public function delete(Request $request, Availability $availability, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la non disponibilité
         if (!$availability) {
             throw new NotFoundHttpException('Non disponibilité non trouvée');
         }
 
+        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('delete'.$availability->getId(), $request->getPayload()->getString('_token'))) {
+            // Suppression de la non disponibilité
             $entityManager->remove($availability);
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'Non disponibilité supprimée avec succès !');
         }
 

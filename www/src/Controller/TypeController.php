@@ -46,12 +46,14 @@ final class TypeController extends AbstractController
     #[Route('/new', name: 'app_type_new', methods: ['GET', 'POST'])]
     public function new(Request $request, TypeRepository $typeRepository): Response
     {
+        // Création d'une nouvelle instance de Type
         $type = new Type();
 
-        // Création du formulaire avec option is_edit à false
+        // Création du formulaire avec option is_edit à false et gestion de la requête  
         $form = $this->createForm(TypeType::class, $type, ['is_edit' => false]);
         $form->handleRequest($request);
 
+        // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
 
             // Gestion de l'image uploadée
@@ -59,24 +61,28 @@ final class TypeController extends AbstractController
 
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // On génère un nom de fichier unique
+                // Génération d'un nom de fichier unique
                 $newFilename = $originalFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
-                // On déplace le fichier dans le dossier public/images
+                // Déplacement du fichier dans le dossier public/images
                 try {
                     $imageFile->move(
                         $this->getParameter('types_images_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
+                    // Message d'erreur si l'upload de l'image a échoué
                     $this->addFlash('danger', 'Une erreur est survenue lors de l\'upload de l\'image');
                 }
 
-                // On set le chemin de l'image dans l'entité
+                // Set du chemin de l'image dans l'entité
                 $type->setImagePath($newFilename);
             }
 
             // Enregistrement du type de bien
             $typeRepository->save($type, true);
+
+            // Message de succès
+            $this->addFlash('success', 'Le type de bien a bien été ajouté');
 
             return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -114,21 +120,23 @@ final class TypeController extends AbstractController
     {
         // Création du formulaire avec option is_edit à true
         $form = $this->createForm(TypeType::class, $type, ['is_edit' => true]);
-        // Préremplit le champ caché avec l'image actuelle
+        // Préremplissage du champ caché avec l'image actuelle
         $form->get('currentImage')->setData($type->getImagePath());
 
+        // Gestion de la requête
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
             // Gestion de l'image uploadée
             $imageFile = $form->get('imagePath')->getData();
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // On génère un nom de fichier unique
+                // Génération d'un nom de fichier unique
                 $newFilename = $originalFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
                 try {
-                    // On déplace le fichier dans le dossier configuré
+                    // Déplacement du fichier dans le dossier configuré
                     $imageFile->move(
                         $this->getParameter('types_images_directory'),
                         $newFilename
@@ -144,6 +152,9 @@ final class TypeController extends AbstractController
 
             // Enregistrement des modifications
             $typeRepository->save($type, true);
+
+            // Message de succès
+            $this->addFlash('success', 'Le type de bien a bien été modifié');
 
             return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -165,7 +176,9 @@ final class TypeController extends AbstractController
     #[Route('/{id}', name: 'app_type_desactivate', methods: ['POST'])]
     public function desactivate(Request $request, Type $type, EntityManagerInterface $entityManager): Response
     {
+        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('desactivate'.$type->getId(), $request->getPayload()->getString('_token'))) {
+            // Désactivation du type de bien
             $type->setIsActive(self::INACTIVE);
             $entityManager->flush();
         }
@@ -184,7 +197,9 @@ final class TypeController extends AbstractController
     #[Route('/{id}/activate', name: 'app_type_activate', methods: ['POST'])]
     public function activate(Request $request, Type $type, EntityManagerInterface $entityManager): Response
     {
+        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('activate'.$type->getId(), $request->getPayload()->getString('_token'))) {
+            // Activation du type de bien
             $type->setIsActive(self::ACTIVE);
             $entityManager->flush();
         }

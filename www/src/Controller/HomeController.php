@@ -26,7 +26,7 @@ class HomeController extends AbstractController
         // Récupérations des locations
         $types = $typeRepository->findAll();
 
-        // On ne récupère que les types actifs
+        // Récupération des types actifs
         $typesAvailable = [];
         foreach ($types as $type) {
             if ($type->isActive()) {
@@ -60,7 +60,7 @@ class HomeController extends AbstractController
         // Récupération des locations
         $rentals = $rentalRepository->findBy(['type' => $type]);
 
-        // On ne récupère que les locations actives
+        // Récupération des locations actives
         $rentalsAvailable = [];
         foreach ($rentals as $rental) {
             if ($rental->isActive()) {
@@ -94,7 +94,7 @@ class HomeController extends AbstractController
         // Récupération des équipements
         $equipments = $equipmentRepository->getEquipmentsForRental($id);
 
-        // On ne récupère que les équipements actifs
+        // Récupération des équipements actifs
         $equipmentsAvailable = [];
         foreach ($equipments as $equipment) {
             if ($equipment['isActive'] == 1) {

@@ -43,15 +43,22 @@ final class EquipmentController extends AbstractController
     #[Route('/new', name: 'app_equipment_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Création d'un nouvel équipement
         $equipment = new Equipment();
+
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(EquipmentType::class, $equipment);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de l'équipement
             $entityManager->persist($equipment);
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'L\'équipement a été ajouté avec succès');
+
             return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -70,6 +77,7 @@ final class EquipmentController extends AbstractController
     #[Route('/{id}', name: 'app_equipment_show', methods: ['GET'])]
     public function show(Equipment $equipment): Response
     {
+        // Vérification de l'existence de l'équipement
         if (!$equipment) {
             throw new NotFoundHttpException('Equipement non trouvée');
         }
@@ -90,17 +98,23 @@ final class EquipmentController extends AbstractController
     #[Route('/{id}/edit', name: 'app_equipment_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de l'équipement
         if (!$equipment) {
             throw new NotFoundHttpException('Equipement non trouvée');
         }
 
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(EquipmentType::class, $equipment);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de la modification de l'équipement
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'L\'équipement a été modifié avec succès');
+
             return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -121,14 +135,18 @@ final class EquipmentController extends AbstractController
     #[Route('/{id}', name: 'app_equipment_desactivate', methods: ['POST'])]
     public function desactivate(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de l'équipement
         if (!$equipment) {
             throw new NotFoundHttpException('Equipement non trouvée');
         }
 
+        // Vérification du jeton CSRF
         if ($this->isCsrfTokenValid('desactivate'.$equipment->getId(), $request->getPayload()->getString('_token'))) {
+            // Désactivation de l'équipement
             $equipment->setIsActive(self::INACTIVE);
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'L\'équipement a été désactivé avec succès');
         }
 
@@ -146,14 +164,18 @@ final class EquipmentController extends AbstractController
     #[Route('/{id}/activate', name: 'app_equipment_activate', methods: ['POST'])]
     public function activate(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de l'équipement
         if (!$equipment) {
             throw new NotFoundHttpException('Non disponibilité non trouvée');
         }
 
+        // Vérification du jeton CSRF
         if ($this->isCsrfTokenValid('activate'.$equipment->getId(), $request->getPayload()->getString('_token'))) {
+            // Activation de l'équipement
             $equipment->setIsActive(self::ACTIVE);
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'L\'équipement a été activé avec succès');
         }
 

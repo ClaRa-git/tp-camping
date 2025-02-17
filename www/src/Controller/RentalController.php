@@ -29,7 +29,7 @@ final class RentalController extends AbstractController
     #[Route(name: 'app_rental_index', methods: ['GET'])]
     public function index(RentalRepository $rentalRepository): Response
     {
-        // On récupère toutes les locations avec toutes les informations
+        // Récupération de toutes les locations
         $rentals = $rentalRepository->getAllInfos();
 
         return $this->render('rental/index.html.twig', [
@@ -47,32 +47,45 @@ final class RentalController extends AbstractController
     #[Route('/new', name: 'app_rental_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Création d'une nouvelle location
         $rental = new Rental();
+
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(RentalType::class, $rental);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
             
-            // On vérifie si le type de location est activé
+            // Vérification si le type de location est activé
             $type = $form->get('type')->getData();
+            // Si le type de location est désactivé
             if ($type->getIsActive() === self::INACTIVE) {
+                // Message d'erreur
                 $this->addFlash('danger', 'Le type de location sélectionné est désactivé');
+
                 return $this->redirectToRoute('app_rental_new');
             }
 
-            // On vérifie si les équipements sont activés
+            // Vérification si les équipements sont activés
             $equipments = $form->get('equipments')->getData();
             foreach ($equipments as $equipment) {
+                // Si un des équipements est désactivé
                 if ($equipment->getIsActive() === self::INACTIVE) {
+                    // Message d'erreur
                     $this->addFlash('danger', 'Un des équipements sélectionné est désactivé');
+
                     return $this->redirectToRoute('app_rental_new');
                 }
             }
             
+            // Enregistrement de la location
             $entityManager->persist($rental);
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'La location a bien été créée');
+
             return $this->redirectToRoute('app_rental_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -91,14 +104,15 @@ final class RentalController extends AbstractController
     #[Route('/{id}', name: 'app_rental_show', methods: ['GET'])]
     public function show(Rental $rental, TypeRepository $typeRepository, EquipmentRepository $equipmentRepository): Response
     {
+        // Vérification de l'existence de la location
         if (!$rental) {
             throw $this->createNotFoundException('La location n\'existe pas');
         }
 
-        // On récupère le type de la location
+        // Récupération du type de location
         $type = $typeRepository->findOneBy(['id' => $rental->getType()]);
 
-        // On récupère les équipements de la location
+        // Récupération des équipements de la location
         $equipments = $equipmentRepository->getEquipmentsForRental($rental->getId());
 
         return $this->render('rental/show.html.twig', [
@@ -119,17 +133,23 @@ final class RentalController extends AbstractController
     #[Route('/{id}/edit', name: 'app_rental_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la location
         if (!$rental) {
             throw $this->createNotFoundException('La location n\'existe pas');
         }
 
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(RentalType::class, $rental);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de la location
             $entityManager->flush();
 
+            // Message de succès
             $this->addFlash('success', 'La location a bien été modifiée');
+
             return $this->redirectToRoute('app_rental_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -150,7 +170,9 @@ final class RentalController extends AbstractController
     #[Route('/{id}', name: 'app_rental_desactivate', methods: ['POST'])]
     public function desactivate(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
     {
+        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('desactivate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
+            // Désactivation de la location
             $rental->setIsActive(self::INACTIVE);
             $entityManager->flush();
 
@@ -171,7 +193,9 @@ final class RentalController extends AbstractController
     #[Route('/{id}/activate', name: 'app_rental_activate', methods: ['POST'])]
     public function activate(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
     {
+        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('activate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
+            // Activation de la location
             $rental->setIsActive(self::ACTIVE);
             $entityManager->flush();
 

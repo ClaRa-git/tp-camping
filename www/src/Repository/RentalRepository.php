@@ -45,7 +45,7 @@ class RentalRepository extends ServiceEntityRepository
         
         $results = $query->getResult();
 
-        // On regroupe les résultats par location
+        // Regroupement des résultats par location
         $groupedResults = [];
         foreach ($results as $result) {
             $id = $result['id'];
@@ -64,13 +64,13 @@ class RentalRepository extends ServiceEntityRepository
                 ];
             }
 
-            // On ajoute les équipements
+            // Ajout des équipements
             $groupedResults[$id]['equipments'][] = [
                 'equipmentLabel' => $result['equipmentLabel'],
             ];
         }
 
-        // On convertit l'array associatif en array indexé
+        // Conversion de l'array associatif en array indexé
         foreach($groupedResults as &$rental) {
             $rental['equipments'] = array_values($rental['equipments']);
         }

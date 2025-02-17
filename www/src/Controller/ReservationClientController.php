@@ -54,24 +54,30 @@ class ReservationClientController extends AbstractController
     #[Route('/new/{id}', name: 'app_reservation_client_new', methods: ['GET', 'POST'])]
     public function new(int $id, Request $request, SeasonRepository $seasonRepository, RentalRepository $rentalRepository, TypeRepository $typeRepository, AvailabilityRepository $availabilityRepository,EntityManagerInterface $entityManager): Response  
     {
+        // Création d'une nouvelle réservation
         $reservation = new Reservation();
+
+        // Création du formulaire et traitement de la requête
         $form = $this->createForm(ReservationClientType::class, $reservation);
         $form->handleRequest($request);
 
-        // On récupère l'utilisateur connecté
+        // Récupération de l'utilisateur connecté
         $reservation->setUser($this->getUser());
 
-        // On affecte la location à la réservation
+        // Affecetation de la location à la réservation
         $rental = $rentalRepository->find($id);
 
-        // Si le locatif n'existe pas, on redirige vers la page d'accueil
+        // Si le locatif n'existe pas, redirection vers la page d'accueil
         if (!$rental) {
+            // Message d'erreur
             $this->addFlash('danger', 'Le locatif n\'existe pas !');
+
             return $this->redirectToRoute('app_home');
         }
 
+        // Vérification du formulaire
         if ($form->isSubmitted()) {
-            // Vérification du bouton cliqué
+            // Vérification du bouton cliqué et récupération du nom du bouton
             $clickedButton = $form->getClickedButton();
             $action = $clickedButton ? $clickedButton->getName() : null;
 
@@ -79,79 +85,93 @@ class ReservationClientController extends AbstractController
             $dateStart = $form->get('dateStart')->getData();
             $dateEnd = $form->get('dateEnd')->getData();
 
-            // On récupère la location grâce à l'id
+            // Récupération de la location grâce à son id
             $rental = $rentalRepository->find($id);
 
-            // On récupère les saisons fermées
+            // Récupération des saisons fermées
             $seasonsClosed = $seasonRepository->findSeasonsClosed();
 
-            // On récupère les non disponibilités du locatif
+            // Récupération des non disponibilités du locatif
             $availabilities = $availabilityRepository->findAvailabilitiesByRental($rental->getId());
 
-            // On vérifie si le camping est ouvert à ces dates
-            dd($dateStart, $dateEnd);
-
+            // Vérification de la fermeture du camping à ces dates
             foreach ($seasonsClosed as $season) {
                 if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateStart()) ||  ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateEnd())) {
+                    // Message d'erreur
                     $this->addFlash('danger', 'Le camping est fermé du ' . $season->getDateStart()->format('d/m/Y') . ' au ' . $season->getDateEnd()->format('d/m/Y') . ' !');
+                    
                     return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
                 }
             }
 
-            // On vérifie si la date sélectionnée est supérieure à la date du jour
+            // Vérification de si la date sélectionnée est supérieure à la date du jour
             $now = new \DateTime('now');
             $now->setTime(0,0,0);
+
+            // Mise à zéro de l'heure pour la comparaison pour éviter les problèmes d'heure
             $dateSZT = $dateStart->setTime(0,0,0);
             $dateEZT = $dateEnd->setTime(0,0,0);
+
+            // Vérification de si la date de début est supérieure à la date du jour
             if ($dateSZT < $now) {
                 $this->addFlash('danger', 'La date de début doit être supérieure à la date du jour !');
                 return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
             }
 
-            // On vérifie si la date de fin est supérieure à la date de début
+            // Vérification de si la date de fin est supérieure à la date de début
             if ($dateEZT <= $dateSZT) {
                 $this->addFlash('danger', 'La date de fin doit être supérieure à la date de début !');
                 return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
             }            
 
+            // Vérification du nombre de personnes
             $nbAdults = $form->get('adultsNumber')->getData();
             $nbKids = $form->get('kidsNumber')->getData();
+
             // On vérifie si le nombre d'adultes et d'enfants rentré est valide
             if ($nbAdults <= 0 || $nbKids < 0) {
+                // Message d'erreur
                 $this->addFlash('danger', 'Le nombre de personnes doit être supérieur à 0 pour les adultes et supérieur ou égal à 0 pour les enfants !');
+                
                 return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
             }
 
             $nbPersons = $form->get('adultsNumber')->getData() + $form->get('kidsNumber')->getData();
 
-            // On vérifie si le nombre de personnes est supérieur à la capacité du locatif
+            // Vérification de si le nombre de personnes est supérieur à la capacité du locatif
             if ($nbPersons > $rental->getBedding()) {
+                // Message d'erreur
                 $this->addFlash('danger', 'Le nombre de personnes est supérieur à la capacité du locatif !');
+                
                 return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
             }
 
-            // On vérifie si le locatif est disponible à ces dates (disponibilités)
+            // Vérification de si le locatif est disponible à ces dates (disponibilités)
             if(!empty($availabilities)){
                 foreach ($availabilities as $availability) {
                     if (($dateStart >= $availability['dateStart']->setTime(0,0,0) && $dateStart <= $availability['dateEnd']->setTime(0,0,0)) || 
                         ($dateEnd >= $availability['dateStart']->setTime(0,0,0) && $dateEnd <= $availability['dateEnd']->setTime(0,0,0))) {
-                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
-                        return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
+                            // Message d'erreur
+                            $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
+                        
+                            return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
                     }
                 }
             }
 
-            // On vérifie si le locatif est disponible à ces dates (réservations)
+            // Vérification de si le locatif est disponible à ces dates (réservations)
             $reservations = $rental->getReservations();
             foreach ($reservations as $res) {
                 if (($dateStart >= $res->getDateStart()->setTime(0,0,0) && $dateStart <= $res->getDateEnd()->setTime(0,0,0)) || 
                     ($dateEnd >= $res->getDateStart()->setTime(0,0,0) && $dateEnd <= $res->getDateEnd()->setTime(0,0,0))) {
-                    $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
-                    return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
+                        // Message d'erreur
+                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
+                        
+                        return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
                 }
             }
 
-            // On remplit la réservation
+            // Remplissage de la réservation
             $reservation->setRental($rental);
             $reservation->setDateStart($form->get('dateStart')->getData());
             $reservation->setDateEnd($form->get('dateEnd')->getData());
@@ -167,6 +187,7 @@ class ReservationClientController extends AbstractController
 
             // Si le bouton cliqué est "Calculer"
             if ($action === 'calculate') {
+                // Message de succès
                 $this->addFlash('success', 'Prix calculé avec succès !');
 
                 // Affichage du prix sans enregistrement
@@ -183,7 +204,9 @@ class ReservationClientController extends AbstractController
                 $entityManager->persist($reservation);
                 $entityManager->flush();
 
+                // Message de succès
                 $this->addFlash('success', 'Réservation confirmée avec succès !');
+
                 return $this->redirectToRoute('app_reservation_client_index');
             }
         }
@@ -205,13 +228,14 @@ class ReservationClientController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_client_show', methods: ['GET'])]
     public function show(Reservation $reservation, UserRepository $userRepository): Response
     {
+        // Vérification de l'existence de la réservation
         if (!$reservation) {
             throw $this->createNotFoundException('La réservation n\'existe pas !');
         }
 
+        // Vérification de si la réservation est annulable
+        // Dans la vue, on n'affichera le bouton d'annulation que si la réservation est pas annulable
         $isCancelable = false;
-
-        // On vérifie si la réservation est annulable
         $dateStart = $reservation->getDateStart();
         $now = new \DateTime('now');
 
@@ -236,16 +260,21 @@ class ReservationClientController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_client_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la réservation
         if (!$reservation) {
             throw $this->createNotFoundException('La réservation n\'existe pas !');
         }
 
+        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+            // Annulation de la réservation
             $reservation->setStatus(self::STATUS_REFUSED);
             $entityManager->flush();
         }
 
+        // Message de succès
         $this->addFlash('success', 'Réservation annulée avec succès !');
+
         return $this->redirectToRoute('app_reservation_client_index', [], Response::HTTP_SEE_OTHER);
     }
 
@@ -259,13 +288,14 @@ class ReservationClientController extends AbstractController
     {
         $total = 0;
 
+        // Mise à zéro de l'heure pour la comparaison pour éviter les problèmes d'heure
         $dateStart = $reservation->getDateStart()->setTime(0,0,0);
         $dateEnd = $reservation->getDateEnd()->setTime(0,0,0);
 
-        // On récupère les saisons qui chevauchent la réservation
+        // récupération des saisons qui chevauchent la réservation
         $seasons = $seasonRepository->findSeasonsBetweenDates($dateStart, $dateEnd);
 
-        // Si pas de saison trouvée, on calcule le prix sans saison
+        // Si pas de saison trouvée, calcul du prix sans saison
         if (empty($seasons)) {
             $days = $dateStart->diff($dateEnd)->days + 1;
             $total = ($days * $reservation->getRental()->getType()->getPrice());
@@ -273,15 +303,15 @@ class ReservationClientController extends AbstractController
         else
         {
             foreach ($seasons as $season) {
-                // On détermine la période de la saison qui chevauche la réservation
-                // Pour avoir le nombre de jours correct de la période on met le temps à 0
+                // Détermination de la période de la saison qui chevauche la réservation
+                // Pour avoir le nombre de jours correct de la période mise du temps à 0
                 $start = $dateStart > $season->getDateStart()->setTime(0,0,0) ? $dateStart : $season->getDateStart()->setTime(0,0,0);
                 $end = $dateEnd < $season->getDateEnd()->setTime(0,0,0) ? $dateEnd : $season->getDateEnd()->setTime(0,0,0);
     
-                // On calcule le nombre de jours de la période
+                // Calcul du nombre de jours de la période
                 $days = $start->diff($end)->days + 1;
     
-                // On calcule le prix total de la réservation
+                // Calcul du prix total de la réservation
                 $total += ($days * $season->getPercentage() * $reservation->getRental()->getType()->getPrice())/100;
             }
     

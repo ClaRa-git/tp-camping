@@ -17,7 +17,7 @@ class TypeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Méthode pour créer un type
+     * Méthode pour sauvegarder un type
      * @param Type $type
      * @param bool $flush
      * @return void
@@ -25,6 +25,7 @@ class TypeRepository extends ServiceEntityRepository
     public function save(Type $type, bool $flush = true): void
     {
         $entityManager = $this->getEntityManager();
+
         $entityManager->persist($type);
 
         if ($flush) {

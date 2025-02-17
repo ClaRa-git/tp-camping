@@ -28,9 +28,9 @@ final class UserController extends AbstractController
     #[Route('/admin/client', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
-        // On récupère les utilisateurs ayant le rôle ROLE_ADMIN
+        // Récupération des utilisateurs ayant le rôle ROLE_ADMIN
         $roleAdmin = $userRepository->findAllAdmins();
-        // On récupère les utilisateurs ayant le rôle ROLE_USER
+        // Récupération des utilisateurs ayant le rôle ROLE_USER
         $roleUser = $userRepository->findAllUsers();
 
         return $this->render('user/index.html.twig', [
@@ -50,25 +50,33 @@ final class UserController extends AbstractController
     #[Route('/admin/client/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface, EntityManagerInterface $entityManager): Response
     {
+        // Création d'un nouvel utilisateur
         $user = new User();
+
+        // Création du formulaire,ajout des options is_edit et is_admin et traitement de la requête
         $form = $this->createForm(UserType::class, $user, ['is_edit' => false, 'is_admin' => true]);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
             $roles = $form->get('roles')->getData();
-            // Si le tableau contient ROLE_ADMIN et ROLE_USER, on retourne un tableau avec uniquement ROLE_ADMIN
+            // Si le tableau contient ROLE_ADMIN et ROLE_USER, renvoi d'un tableau avec uniquement ROLE_ADMIN
             if (in_array('ROLE_ADMIN', $user->getRoles()) && in_array('ROLE_USER', $user->getRoles())) {
                 $roles = ['ROLE_ADMIN'];
             }
             $user->setRoles($roles);
 
-            // On récupère la valeur du champ plainPassword du formulaire
+            // Récupération de la valeur du champ plainPassword du formulaire
             $plainPassword = $form->get('plainPassword')->getData();
-            // On hash le mot de passe
+            // Hash du mot de passe
             $user->setPassword($userPasswordHasherInterface->hashPassword($user, $plainPassword));
 
+            // Sauvegarde de l'utilisateur
             $entityManager->persist($user);
             $entityManager->flush();
+
+            // Message de succès
+            $this->addFlash('success', 'L\'utilisateur a bien été créé.');
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -104,20 +112,32 @@ final class UserController extends AbstractController
     #[Route('/client/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+        // Vérification si l'utilisateur connecté est un admin
         $is_admin = in_array('ROLE_ADMIN', $this->getUser()->getRoles());
 
+        // Création du formulaire, ajout des options is_edit et is_admin et traitement de la requête
         $form = $this->createForm(UserType::class, $user, ['is_edit' => true, 'is_admin' => $is_admin]);
         $form->handleRequest($request);
 
+        // Vérification de la soumission du formulaire et de sa validité
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement de la modification de l'utilisateur
             $entityManager->flush();
             
-            // Si l'utilisateur connecté est un admin, on redirige vers la liste des utilisateurs
+            // Si l'utilisateur connecté est un admin, redirection vers la liste des utilisateurs
             if ($is_admin) {
+                // Message de succès
+                $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
+
                 return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
             }
-            // Sinon, on redirige vers la page de profil de l'utilisateur
-            return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+            // Sinon, redirection vers la page de profil de l'utilisateur
+            else {
+                // Message de succès
+                $this->addFlash('success', 'Votre profil a bien été modifié.');
+                            
+                return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->render('user/edit.html.twig', [
@@ -137,7 +157,9 @@ final class UserController extends AbstractController
     #[Route('admin/client/{id}', name: 'app_user_desactivate', methods: ['POST'])]
     public function desactivate(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+        // Vérification du jeton CSRF
         if ($this->isCsrfTokenValid('desactivate' . $user->getId(), $request->getPayload()->getString('_token'))) {
+            // Désactivation de l'utilisateur
             $user->setIsActive(self::INACTIVE);
             $entityManager->flush();
         }
@@ -156,7 +178,9 @@ final class UserController extends AbstractController
     #[Route('admin/client/{id}/activate', name: 'app_user_activate', methods: ['POST'])]
     public function activate(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+        // Vérification du jeton CSRF
         if ($this->isCsrfTokenValid('activate' . $user->getId(), $request->getPayload()->getString('_token'))) {
+            // Activation de l'utilisateur
             $user->setIsActive(self::ACTIVE);
             $entityManager->flush();
         }
