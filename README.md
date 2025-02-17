@@ -3,7 +3,6 @@
 Base de données pour gérer un campings avec les biens et les réservations.
 On y trouve les utilisateurs, les réservations, les locations, les équipements, les types de location, les disponibilités (dans la base les dates rentrées sont celles de NON disponibilité) et les prix.
 
-
 ## Pour mettre en place le projet
 
 ## Prérequis
@@ -114,3 +113,5 @@ database : camping
 user : admin
 mdp : admin
 port : 80 et 3306
+
+## FONCTIONNE AVEC CAMPING-JS
