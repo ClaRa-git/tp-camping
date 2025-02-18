@@ -96,12 +96,22 @@ final class TypeController extends AbstractController
     /**
      * Méthode permettant d'afficher un type de bien
      * @Route("/{id}", name="app_type_show", methods={"GET"})
-     * @param Type $type
+     * @param TypeRepository $typeRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/{id}', name: 'app_type_show', methods: ['GET'])]
-    public function show(Type $type): Response
+    public function show(TypeRepository $typeRepository, int $id): Response
     {
+        // Vérification de l'existence du type
+        $type = $typeRepository->find($id);
+        if (!$type) {
+            // Si le type n'existe pas, redirection vers la liste des types
+            $this->addFlash('danger', 'Le type demandé n\'existe pas.');
+
+            return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('type/show.html.twig', [
             'type' => $type
         ]);
@@ -111,13 +121,22 @@ final class TypeController extends AbstractController
      * Méthode permettant de modifier un type de bien
      * @Route("/{id}/edit", name="app_type_edit", methods={"GET", "POST"})
      * @param Request $request
-     * @param Type $type
-     * @param EntityManagerInterface $entityManager
+     * @param TypeRepository $typeRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/{id}/edit', name: 'app_type_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Type $type, TypeRepository $typeRepository): Response
+    public function edit(Request $request, int $id, TypeRepository $typeRepository): Response
     {
+        // Vérification de l'existence du type
+        $type = $typeRepository->find($id);
+        if (!$type) {
+            // Si le type n'existe pas, redirection vers la liste des types
+            $this->addFlash('danger', 'Le type demandé n\'existe pas.');
+
+            return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Création du formulaire avec option is_edit à true
         $form = $this->createForm(TypeType::class, $type, ['is_edit' => true]);
         // Préremplissage du champ caché avec l'image actuelle
@@ -169,13 +188,23 @@ final class TypeController extends AbstractController
      * Méthode permettant de supprimer un type de bien
      * @Route("/{id}", name="app_type_desactivate", methods={"POST"})
      * @param Request $request
-     * @param Type $type
+     * @param TypeRepository $typeRepository
+     * @param int $id
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}', name: 'app_type_desactivate', methods: ['POST'])]
-    public function desactivate(Request $request, Type $type, EntityManagerInterface $entityManager): Response
+    public function desactivate(Request $request, TypeRepository $typeRepository, int $id, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence du type
+        $type = $typeRepository->find($id);
+        if (!$type) {
+            // Si le type n'existe pas, redirection vers la liste des types
+            $this->addFlash('danger', 'Le type demandé n\'existe pas.');
+
+            return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Vérification du token CSRF
         if ($this->isCsrfTokenValid('desactivate'.$type->getId(), $request->getPayload()->getString('_token'))) {
             // Désactivation du type de bien
@@ -190,13 +219,22 @@ final class TypeController extends AbstractController
      * Méthode permettant d'activer un type de bien
      * @Route("/{id}/activate", name="app_type_activate", methods={"POST"})
      * @param Request $request
-     * @param Type $type
+     * @param TypeRepository $typeRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}/activate', name: 'app_type_activate', methods: ['POST'])]
-    public function activate(Request $request, Type $type, EntityManagerInterface $entityManager): Response
+    public function activate(Request $request, TypeRepository $typeRepository, int $id, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence du type
+        $type = $typeRepository->find($id);
+        if (!$type) {
+            // Si le type n'existe pas, redirection vers la liste des types
+            $this->addFlash('danger', 'Le type demandé n\'existe pas.');
+
+            return $this->redirectToRoute('app_type_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Vérification du token CSRF
         if ($this->isCsrfTokenValid('activate'.$type->getId(), $request->getPayload()->getString('_token'))) {
             // Activation du type de bien

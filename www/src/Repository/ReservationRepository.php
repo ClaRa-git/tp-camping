@@ -93,6 +93,41 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
+     * Méthode pour récupérer les réservations non annulées d'une location
+     * @param int $rentalId
+     * @return array
+     */
+    public function getReservationsByRentalId(int $rentalId): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select([
+            'r.id',
+            'r.dateStart',
+            'r.dateEnd',
+            'r.adultsNumber',
+            'r.kidsNumber',
+            'r.price',
+            'r.status',
+            'u.firstname',
+            'u.lastname',
+            'u.email'
+        ])
+            ->from(Reservation::class, 'r')
+            ->leftJoin('r.user', 'u')
+            ->where('r.rental = :rentalId')
+            ->andWhere('r.status == 1')
+            ->setParameter('rentalId', $rentalId)
+            ->getQuery();
+        
+        $result = $query->getResult();
+
+        return $result;
+    }
+
+    /**
      * Méthode pour récupérer les informations d'une réservation par filtre
      * @param string $filter
      * @return array

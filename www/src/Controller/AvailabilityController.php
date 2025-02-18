@@ -72,14 +72,20 @@ final class AvailabilityController extends AbstractController
      * Méthode permettant d'afficher une disponibilité
      * @Route("/{id}", name="app_availability_show", methods={"GET"})
      * @param Availability $availability
+     * @param RentalRepository $rentalRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/{id}', name: 'app_availability_show', methods: ['GET'])]
-    public function show(Availability $availability, RentalRepository $rentalRepository): Response
+    public function show(int $id, AvailabilityRepository $availabilityRepository, RentalRepository $rentalRepository): Response
     {
         // Vérification de l'existence de la non disponibilité
+        $availability = $availabilityRepository->find($id);
         if (!$availability) {
-            throw new NotFoundHttpException('Non disponibilité non trouvée');
+            // Si elle n'existe pas, redirection vers la liste des non disponibilités
+            $this->addFlash('danger', 'Non disponibilité non trouvée !');
+
+            return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Récupération de la location par son ID
@@ -95,17 +101,23 @@ final class AvailabilityController extends AbstractController
      * Méthode permettant de modifier une disponibilité
      * @Route("/{id}/edit", name="app_availability_edit", methods={"GET","POST"})
      * @param Request $request
-     * @param Availability $availability
+     * @param int $id
+     * @param AvailabilityRepository $availabilityRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}/edit', name: 'app_availability_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Availability $availability, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, AvailabilityRepository $availabilityRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la non disponibilité
+        $availability = $availabilityRepository->find($id);
         if (!$availability) {
-            throw new NotFoundHttpException('Non disponibilité non trouvée');
+            // Si elle n'existe pas, redirection vers la liste des non disponibilités
+            $this->addFlash('danger', 'Non disponibilité non trouvée !');
+
+            return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);
         }
+
 
         // Création du formulaire et traitement de la requête
         $form = $this->createForm(AvailabilityType::class, $availability);
@@ -132,16 +144,21 @@ final class AvailabilityController extends AbstractController
      * Méthode permettant de supprimer une disponibilité
      * @Route("/{id}", name="app_availability_delete", methods={"POST"})
      * @param Request $request
-     * @param Availability $availability
+     * @param int $id
+     * @param AvailabilityRepository $availabilityRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}', name: 'app_availability_delete', methods: ['POST'])]
-    public function delete(Request $request, Availability $availability, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, int $id, AvailabilityRepository $availabilityRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la non disponibilité
+        $availability = $availabilityRepository->find($id);
         if (!$availability) {
-            throw new NotFoundHttpException('Non disponibilité non trouvée');
+            // Si elle n'existe pas, redirection vers la liste des non disponibilités
+            $this->addFlash('danger', 'Non disponibilité non trouvée !');
+            
+            return $this->redirectToRoute('app_availability_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Vérification du token CSRF

@@ -98,15 +98,22 @@ final class RentalController extends AbstractController
     /**
      * Méthode permettant d'afficher une location
      * @Route("/{id}", name="app_rental_show", methods={"GET"})
-     * @param Rental $rental
+     * @param RentalRepository $rentalRepository
+     * @param int $id
+     * @param TypeRepository $typeRepository
+     * @param EquipmentRepository $equipmentRepository
      * @return Response
      */
     #[Route('/{id}', name: 'app_rental_show', methods: ['GET'])]
-    public function show(Rental $rental, TypeRepository $typeRepository, EquipmentRepository $equipmentRepository): Response
+    public function show(RentalRepository $rentalRepository, int $id, TypeRepository $typeRepository, EquipmentRepository $equipmentRepository): Response
     {
         // Vérification de l'existence de la location
+        $rental = $rentalRepository->findOneBy(['id' => $id]);
         if (!$rental) {
-            throw $this->createNotFoundException('La location n\'existe pas');
+            // Si elle n'existe pas, redirection vers la liste des locations
+            $this->addFlash('danger', 'La location n\'existe pas');
+
+            return $this->redirectToRoute('app_rental_index');
         }
 
         // Récupération du type de location
@@ -126,16 +133,21 @@ final class RentalController extends AbstractController
      * Méthode permettant de modifier une location
      * @Route("/{id}/edit", name="app_rental_edit", methods={"GET","POST"})
      * @param Request $request
-     * @param Rental $rental
+     * @param int $id
+     * @param RentalRepository $rentalRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}/edit', name: 'app_rental_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, RentalRepository $rentalRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la location
+        $rental = $rentalRepository->findOneBy(['id' => $id]);
         if (!$rental) {
-            throw $this->createNotFoundException('La location n\'existe pas');
+            // Si elle n'existe pas, redirection vers la liste des locations
+            $this->addFlash('danger', 'La location n\'existe pas');
+
+            return $this->redirectToRoute('app_rental_index');
         }
 
         // Création du formulaire et traitement de la requête
@@ -163,13 +175,23 @@ final class RentalController extends AbstractController
      * Méthode permettant de supprimer une location
      * @Route("/{id}", name="app_rental_delete", methods={"POST"})
      * @param Request $request
-     * @param Rental $rental
+     * @param int $id
+     * @param RentalRepository $rentalRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}', name: 'app_rental_desactivate', methods: ['POST'])]
-    public function desactivate(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
+    public function desactivate(Request $request, int $id, RentalRepository $rentalRepository, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la location
+        $rental = $rentalRepository->findOneBy(['id' => $id]);
+        if (!$rental) {
+            // Si elle n'existe pas, redirection vers la liste des locations
+            $this->addFlash('danger', 'La location n\'existe pas');
+
+            return $this->redirectToRoute('app_rental_index');
+        }
+
         // Vérification du token CSRF
         if ($this->isCsrfTokenValid('desactivate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
             // Désactivation de la location
@@ -186,13 +208,23 @@ final class RentalController extends AbstractController
      * Méthode permettant d'activer une location
      * @Route("/{id}/activate", name="app_rental_activate", methods={"POST"})
      * @param Request $request
-     * @param Rental $rental
+     * @param int $id
+     * @param RentalRepository $rentalRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}/activate', name: 'app_rental_activate', methods: ['POST'])]
-    public function activate(Request $request, Rental $rental, EntityManagerInterface $entityManager): Response
+    public function activate(Request $request, int $id, RentalRepository $rentalRepository, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de la location
+        $rental = $rentalRepository->findOneBy(['id' => $id]);
+        if (!$rental) {
+            // Si elle n'existe pas, redirection vers la liste des locations
+            $this->addFlash('danger', 'La location n\'existe pas');
+            
+            return $this->redirectToRoute('app_rental_index');
+        }
+
         // Vérification du token CSRF
         if ($this->isCsrfTokenValid('activate'.$rental->getId(), $request->getPayload()->getString('_token'))) {
             // Activation de la location

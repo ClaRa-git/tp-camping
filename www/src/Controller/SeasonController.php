@@ -66,15 +66,20 @@ final class SeasonController extends AbstractController
     /**
      * Méthode permettant d'afficher une saison
      * @Route("/{id}", name="app_season_show", methods={"GET"})
-     * @param Season $season
+     * @param SeasonRepository $seasonRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/{id}', name: 'app_season_show', methods: ['GET'])]
-    public function show(Season $season): Response
+    public function show(SeasonRepository $seasonRepository, int $id): Response
     {
         // Vérification de l'existence de la saison
+        $season = $seasonRepository->find($id);
         if (!$season) {
-            throw $this->createNotFoundException('La saison demandée n\'existe pas.');
+            // Si la saison n'existe pas, redirection vers la liste des saisons
+            $this->addFlash('danger', 'La saison demandée n\'existe pas.');
+
+            return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('season/show.html.twig', [
@@ -86,16 +91,21 @@ final class SeasonController extends AbstractController
      * Méthode permettant de modifier une saison
      * @Route("/{id}/edit", name="app_season_edit", methods={"GET","POST"})
      * @param Request $request
-     * @param Season $season
+     * @param SeasonRepository $seasonRepository
+     * @param int $id
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}/edit', name: 'app_season_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Season $season, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, SeasonRepository $seasonRepository, int $id, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la saison
+        $season = $seasonRepository->find($id);
         if (!$season) {
-            throw $this->createNotFoundException('La saison demandée n\'existe pas.');
+            // Si la saison n'existe pas, redirection vers la liste des saisons
+            $this->addFlash('danger', 'La saison demandée n\'existe pas.');
+
+            return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Création du formulaire et traitement de la requête
@@ -123,16 +133,21 @@ final class SeasonController extends AbstractController
      * Méthode permettant de supprimer une saison
      * @Route("/{id}", name="app_season_delete", methods={"POST"})
      * @param Request $request
-     * @param Season $season
+     * @param SeasonRepository $seasonRepository
+     * @param int $id
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}', name: 'app_season_delete', methods: ['POST'])]
-    public function delete(Request $request, Season $season, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, SeasonRepository $seasonRepository, int $id, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la saison
+        $season = $seasonRepository->find($id);
         if (!$season) {
-            throw $this->createNotFoundException('La saison demandée n\'existe pas.');
+            // Si la saison n'existe pas, redirection vers la liste des saisons
+            $this->addFlash('danger', 'La saison demandée n\'existe pas.');
+
+            return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Vérification du token CSRF

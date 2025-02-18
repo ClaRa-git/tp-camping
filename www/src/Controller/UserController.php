@@ -90,7 +90,8 @@ final class UserController extends AbstractController
     /**
      * Méthode permettant d'afficher un utilisateur
      * @Route("/{id}", name="app_user_show", methods={"GET"})
-     * @param User $user
+     * @param UserRepository $userRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/client/{id}', name: 'app_user_show', methods: ['GET'])]
@@ -98,8 +99,10 @@ final class UserController extends AbstractController
     {
         // Vérification de l'existence de l'utilisateur
         $user = $userRepository->find($id);
-
         if (!$user) {
+            // Si l'utilisateur n'existe pas, redirection vers la page de profil de l'utilisateur connecté
+            $this->addFlash('danger', 'L\'utilisateur n\'existe pas.');
+
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
         }
 
@@ -117,7 +120,8 @@ final class UserController extends AbstractController
      * Méthode permettant de modifier un utilisateur
      * @Route("/{id}/edit", name="app_user_edit", methods={"GET","POST"})
      * @param Request $request
-     * @param User $user
+     * @param UserRepository $userRepository
+     * @param int $id
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
@@ -126,10 +130,13 @@ final class UserController extends AbstractController
     {
         // Vérification de l'existence de l'utilisateur
         $user = $userRepository->find($id);
-
         if (!$user) {
+            // Si l'utilisateur n'existe pas, redirection vers la page de profil de l'utilisateur connecté
+            $this->addFlash('danger', 'L\'utilisateur n\'existe pas.');
+
             return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
         }
+
 
         // Si l'id ne correspond pas à l'id de l'utilisateur connecté, redirection vers la page de profil de l'utilisateur connecté
         if ($user->getId() !== $this->getUser()->getId() && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
@@ -177,13 +184,23 @@ final class UserController extends AbstractController
      * Méthode permettant de désactiver un utilisateur
      * @Route("/{id}", name="app_user_desactivate", methods={"POST"})
      * @param Request $request
-     * @param User $user
+     * @param UserRepository $userRepository
+     * @param int $id
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('admin/client/{id}', name: 'app_user_desactivate', methods: ['POST'])]
-    public function desactivate(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function desactivate(Request $request, UserRepository $userRepository, int $id, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de l'utilisateur
+        $user = $userRepository->find($id);
+        if (!$user) {
+            // Si l'utilisateur n'existe pas, redirection vers la page de profil de l'utilisateur connecté
+            $this->addFlash('danger', 'L\'utilisateur n\'existe pas.');
+
+            return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
+        }
+
         // Vérification du jeton CSRF
         if ($this->isCsrfTokenValid('desactivate' . $user->getId(), $request->getPayload()->getString('_token'))) {
             // Désactivation de l'utilisateur
@@ -198,13 +215,23 @@ final class UserController extends AbstractController
      * Méthode permettant d'activer un utilisateur
      * @Route("/{id}/activate", name="app_user_activate", methods={"POST"})
      * @param Request $request
-     * @param User $user
+     * @param UserRepository $userRepository
+     * @param int $id
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('admin/client/{id}/activate', name: 'app_user_activate', methods: ['POST'])]
-    public function activate(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function activate(Request $request, UserRepository $userRepository, int $id, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'existence de l'utilisateur
+        $user = $userRepository->find($id);
+        if (!$user) {
+            // Si l'utilisateur n'existe pas, redirection vers la page de profil de l'utilisateur connecté
+            $this->addFlash('danger', 'L\'utilisateur n\'existe pas.');
+
+            return $this->redirectToRoute('app_user_show', ['id' => $this->getUser()->getId()], Response::HTTP_SEE_OTHER);
+        }
+
         // Vérification du jeton CSRF
         if ($this->isCsrfTokenValid('activate' . $user->getId(), $request->getPayload()->getString('_token'))) {
             // Activation de l'utilisateur

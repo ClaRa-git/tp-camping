@@ -43,6 +43,7 @@ class ReservationClientController extends AbstractController
     /**
      * Méthode qui permet de créer une nouvelle réservation
      * @Route("/client/reservation/new", name="app_reservation_new", methods={"GET", "POST"})
+     * @param int $id
      * @param Request $request
      * @param SeasonRepository $seasonRepository
      * @param RentalRepository $rentalRepository
@@ -160,7 +161,7 @@ class ReservationClientController extends AbstractController
             }
 
             // Vérification de si le locatif est disponible à ces dates (réservations)
-            $reservations = $rental->getReservations();
+            $reservations = $rentalRepository->getReservationsByRental($rental->getId());
             foreach ($reservations as $res) {
                 if (($dateStart >= $res->getDateStart()->setTime(0,0,0) && $dateStart <= $res->getDateEnd()->setTime(0,0,0)) || 
                     ($dateEnd >= $res->getDateStart()->setTime(0,0,0) && $dateEnd <= $res->getDateEnd()->setTime(0,0,0))) {
@@ -223,15 +224,20 @@ class ReservationClientController extends AbstractController
     /**
      * Méthode qui affiche les détails d'une réservation
      * @Route("/client/{id}", name="app_reservation_show", methods={"GET"})
-     * @param Reservation $reservation
+     * @param ReservationRepository $reservationRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/{id}', name: 'app_reservation_client_show', methods: ['GET'])]
-    public function show(Reservation $reservation, UserRepository $userRepository): Response
+    public function show(ReservationRepository $reservationRepository, int $id, UserRepository $userRepository): Response
     {
         // Vérification de l'existence de la réservation
+        $reservation = $reservationRepository->find($id);
         if (!$reservation) {
-            throw $this->createNotFoundException('La réservation n\'existe pas !');
+            // Si la réservation n'existe pas, redirection vers la liste des réservations
+            $this->addFlash('danger', 'La réservation n\'existe pas !');
+
+            return $this->redirectToRoute('app_reservation_client_index');
         }
 
         // Vérification de si la réservation est annulable
@@ -254,16 +260,21 @@ class ReservationClientController extends AbstractController
      * Méthode qui permet d'annuler une réservation
      * @Route("/{id}", name="app_reservation_cancel", methods={"POST"})
      * @param Request $request
-     * @param Reservation $reservation
+     * @param int $id
+     * @param ReservationRepository $reservationRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}', name: 'app_reservation_client_cancel', methods: ['POST'])]
-    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    public function cancel(Request $request, int $id, ReservationRepository $reservationRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la réservation
+        $reservation = $reservationRepository->find($id);
         if (!$reservation) {
-            throw $this->createNotFoundException('La réservation n\'existe pas !');
+            // Si la réservation n'existe pas, redirection vers la liste des réservations
+            $this->addFlash('danger', 'La réservation n\'existe pas !');
+
+            return $this->redirectToRoute('app_reservation_client_index');
         }
 
         // Vérification du token CSRF

@@ -45,13 +45,14 @@ final class ReservationController extends AbstractController
      * Méthode qui permet de créer une nouvelle réservation
      * @Route("/client/reservation/new", name="app_reservation_new", methods={"GET", "POST"})
      * @param Request $request
+     * @param RentalRepository $rentalRepository
      * @param SeasonRepository $seasonRepository
      * @param AvailabilityRepository $availabilityRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/admin/reservation/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SeasonRepository $seasonRepository, AvailabilityRepository $availabilityRepository,EntityManagerInterface $entityManager): Response  
+    public function new(Request $request, RentalRepository $rentalRepository, SeasonRepository $seasonRepository, AvailabilityRepository $availabilityRepository,EntityManagerInterface $entityManager): Response  
     {
         // Création d'une nouvelle réservation
         $reservation = new Reservation();
@@ -150,7 +151,7 @@ final class ReservationController extends AbstractController
             }
 
             // Vérification de si le locatif est disponible à ces dates (réservations)
-            $reservations = $rental->getReservations();
+            $reservations = $rentalRepository->findReservationsByRental($rental->getId());
             foreach ($reservations as $res) {
                 if (($dateStart >= $res->getDateStart() && $dateStart <= $res->getDateEnd()) || 
                     ($dateEnd >= $res->getDateStart() && $dateEnd <= $res->getDateEnd())) {
@@ -201,15 +202,20 @@ final class ReservationController extends AbstractController
     /**
      * Méthode qui affiche les détails d'une réservation
      * @Route("/client/{id}", name="app_reservation_show", methods={"GET"})
-     * @param Reservation $reservation
+     * @param ReservationRepository $reservationRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/admin/reservation/{id}', name: 'app_reservation_show', methods: ['GET'])]
-    public function show(Reservation $reservation, UserRepository $userRepository): Response
+    public function show(ReservationRepository $reservationRepository, int $id, UserRepository $userRepository): Response
     {
         // Vérification de l'existence de la réservation
+        $reservation = $reservationRepository->find($id);
         if (!$reservation) {
-            throw new NotFoundHttpException('Réservation non trouvée');
+            // Si la réservation n'existe pas, redirection vers la liste des réservations
+            $this->addFlash('danger', 'La réservation n\'existe pas !');
+
+            return $this->redirectToRoute('app_reservation_client_index');
         }
 
         // Récupération du client
@@ -225,16 +231,21 @@ final class ReservationController extends AbstractController
      * Méthode qui permet de modifier une réservation
      * @Route("/admin/{id}/edit", name="app_reservation_edit", methods={"GET", "POST"})
      * @param Request $request
-     * @param Reservation $reservation
+     * @param int $id
+     * @param ReservationRepository $reservationRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/admin/reservation/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, ReservationRepository $reservationRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la réservation
+        $reservation = $reservationRepository->find($id);
         if (!$reservation) {
-            throw new NotFoundHttpException('Réservation non trouvée');
+            // Si la réservation n'existe pas, redirection vers la liste des réservations
+            $this->addFlash('danger', 'La réservation n\'existe pas !');
+
+            return $this->redirectToRoute('app_reservation_client_index');
         }
 
         // Création du formulaire de réservation et traitement de la requête
@@ -262,16 +273,21 @@ final class ReservationController extends AbstractController
      * Méthode qui permet d'annuler une réservation
      * @Route("/admin/{id}", name="app_reservation_cancel", methods={"POST"})
      * @param Request $request
-     * @param Reservation $reservation
+     * @param int $id
+     * @param ReservationRepository $reservationRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/admin/reservation/{id}', name: 'app_reservation_cancel', methods: ['POST'])]
-    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    public function cancel(Request $request, int $id, ReservationRepository $reservationRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de la réservation
+        $reservation = $reservationRepository->find($id);
         if (!$reservation) {
-            throw new NotFoundHttpException('Réservation non trouvée');
+            // Si la réservation n'existe pas, redirection vers la liste des réservations
+            $this->addFlash('danger', 'La réservation n\'existe pas !');
+
+            return $this->redirectToRoute('app_reservation_client_index');
         }
 
         // Vérification du jeton CSRF

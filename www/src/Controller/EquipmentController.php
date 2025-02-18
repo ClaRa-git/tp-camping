@@ -71,15 +71,20 @@ final class EquipmentController extends AbstractController
     /**
      * Méthode permettant d'afficher un équipement
      * @Route("/{id}", name="app_equipment_show", methods={"GET"})
-     * @param Equipment $equipment
+     * @param EquipmentRepository $equipmentRepository
+     * @param int $id
      * @return Response
      */
     #[Route('/{id}', name: 'app_equipment_show', methods: ['GET'])]
-    public function show(Equipment $equipment): Response
+    public function show(int $id, EquipmentRepository $equipmentRepository): Response
     {
         // Vérification de l'existence de l'équipement
+        $equipment = $equipmentRepository->find($id);
         if (!$equipment) {
-            throw new NotFoundHttpException('Equipement non trouvée');
+            // S'il n'existe pas, redirection vers la liste des équipements
+            $this->addFlash('danger', 'L\'équipement n\'existe pas');
+
+            return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('equipment/show.html.twig', [
@@ -91,17 +96,23 @@ final class EquipmentController extends AbstractController
      * Méthode permettant de modifier un équipement
      * @Route("/{id}/edit", name="app_equipment_edit", methods={"GET", "POST"})
      * @param Request $request
-     * @param Equipment $equipment
+     * @param int $id
+     * @param EquipmentRepository $equipmentRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}/edit', name: 'app_equipment_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, EquipmentRepository $equipmentRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de l'équipement
+        $equipment = $equipmentRepository->find($id);
         if (!$equipment) {
-            throw new NotFoundHttpException('Equipement non trouvée');
+            // S'il n'existe pas, redirection vers la liste des équipements
+            $this->addFlash('danger', 'L\'équipement n\'existe pas');
+
+            return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
+
 
         // Création du formulaire et traitement de la requête
         $form = $this->createForm(EquipmentType::class, $equipment);
@@ -128,16 +139,21 @@ final class EquipmentController extends AbstractController
      * Méthode permettant de désactiver un équipement
      * @Route("/{id}", name="app_equipment_desactivate", methods={"POST"})
      * @param Request $request
-     * @param Equipment $equipment
+     * @param int $id
+     * @param EquipmentRepository $equipmentRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}', name: 'app_equipment_desactivate', methods: ['POST'])]
-    public function desactivate(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
+    public function desactivate(Request $request, int $id, EquipmentRepository $equipmentRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de l'équipement
+        $equipment = $equipmentRepository->find($id);
         if (!$equipment) {
-            throw new NotFoundHttpException('Equipement non trouvée');
+            // S'il n'existe pas, redirection vers la liste des équipements
+            $this->addFlash('danger', 'L\'équipement n\'existe pas');
+
+            return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Vérification du jeton CSRF
@@ -157,16 +173,21 @@ final class EquipmentController extends AbstractController
      * Méthode permettant d'activer un équipement
      * @Route("/{id}/activate", name="app_equipment_activate", methods={"POST"})
      * @param Request $request
-     * @param Equipment $equipment
+     * @param int $id
+     * @param EquipmentRepository $equipmentRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/{id}/activate', name: 'app_equipment_activate', methods: ['POST'])]
-    public function activate(Request $request, Equipment $equipment, EntityManagerInterface $entityManager): Response
+    public function activate(Request $request, int $id, EquipmentRepository $equipmentRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'existence de l'équipement
+        $equipment = $equipmentRepository->find($id);
         if (!$equipment) {
-            throw new NotFoundHttpException('Non disponibilité non trouvée');
+            // S'il n'existe pas, redirection vers la liste des équipements
+            $this->addFlash('danger', 'L\'équipement n\'existe pas');
+            
+            return $this->redirectToRoute('app_equipment_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Vérification du jeton CSRF
