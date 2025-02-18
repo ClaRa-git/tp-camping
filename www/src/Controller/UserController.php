@@ -66,10 +66,28 @@ final class UserController extends AbstractController
             }
             $user->setRoles($roles);
 
+            // Vérification du format de l'email
+            if (!$this->isValidEmail($user->getEmail())) {
+                // Message d'erreur
+                $this->addFlash('danger', 'L\'adresse email n\'est pas valide.');
+                
+                return $this->redirectToRoute('app_register', [], Response::HTTP_SEE_OTHER);
+            }
+
             // Récupération de la valeur du champ plainPassword du formulaire
             $plainPassword = $form->get('plainPassword')->getData();
+            // Vérification du format du mot de passe
+            if (!$this->isValidPassword($plainPassword)) {
+                // Message d'erreur
+                $this->addFlash('danger', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.');
+
+                return $this->redirectToRoute('app_user_new', [], Response::HTTP_SEE_OTHER);
+            }
             // Hash du mot de passe
             $user->setPassword($userPasswordHasherInterface->hashPassword($user, $plainPassword));
+
+            // Mise à ACTIVE de l'utilisateur
+            $user->setIsActive(self::ACTIVE);
 
             // Sauvegarde de l'utilisateur
             $entityManager->persist($user);
@@ -240,5 +258,25 @@ final class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Méthode qui vérifie le format de l'email
+     * @param string $email
+     * @return bool
+     */
+    function isValidEmail($email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * Méthode qui vérifie que le mdp contient au moins 8 caractères, une majuscule, une minuscule et un chiffre
+     * @param string $password
+     * @return bool
+     */
+    function isValidPassword($password): bool
+    {
+        return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/', $password);
     }
 }
