@@ -20,8 +20,7 @@ class NavExtensionRuntime implements RuntimeExtensionInterface
             ['label' => 'Date de début', 'filter' => 'r.dateStart ASC', 'icon' => 'fa-sharp fa-solid fa-arrow-up'],
             ['label' => 'Date de début', 'filter' => 'r.dateStart DESC', 'icon' => 'fa-sharp fa-solid fa-arrow-down'],
             ['label' => 'Date de fin', 'filter' => 'r.dateEnd ASC', 'icon' => 'fa-sharp fa-solid fa-arrow-up'],
-            ['label' => 'Date de fin', 'filter' => 'r.dateEnd DESC', 'icon' => 'fa-sharp fa-solid fa-arrow-down'],
-            ['label' => 'Location']
+            ['label' => 'Date de fin', 'filter' => 'r.dateEnd DESC', 'icon' => 'fa-sharp fa-solid fa-arrow-down']
         ];
     }
 
