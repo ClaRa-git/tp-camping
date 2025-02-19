@@ -49,11 +49,12 @@ class ReservationClientController extends AbstractController
      * @param RentalRepository $rentalRepository
      * @param TypeRepository $typeRepository
      * @param AvailabilityRepository $availabilityRepository
+     * @param ReservationRepository $reservationRepository
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/new/{id}', name: 'app_reservation_client_new', methods: ['GET', 'POST'])]
-    public function new(int $id, Request $request, SeasonRepository $seasonRepository, RentalRepository $rentalRepository, TypeRepository $typeRepository, AvailabilityRepository $availabilityRepository,EntityManagerInterface $entityManager): Response  
+    public function new(int $id, Request $request, SeasonRepository $seasonRepository, RentalRepository $rentalRepository, TypeRepository $typeRepository, AvailabilityRepository $availabilityRepository, ReservationRepository $reservationRepository,EntityManagerInterface $entityManager): Response  
     {
         // Création d'une nouvelle réservation
         $reservation = new Reservation();
@@ -65,13 +66,31 @@ class ReservationClientController extends AbstractController
         // Récupération de l'utilisateur connecté
         $reservation->setUser($this->getUser());
 
-        // Affecetation de la location à la réservation
+        // Affectation de la location à la réservation
         $rental = $rentalRepository->find($id);
 
         // Si le locatif n'existe pas, redirection vers la page d'accueil
         if (!$rental) {
             // Message d'erreur
             $this->addFlash('danger', 'Le locatif n\'existe pas !');
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Vérification de l'activation du locatif
+        if (!$rental->isActive()) {
+            // Message d'erreur
+            $this->addFlash('danger', 'Le locatif n\'est pas activé !');
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Vérification de l'activation du type
+        $idType = $rental->getType()->getId();
+        $type = $typeRepository->getType($idType);
+        if (!$type->isActive()) {
+            // Message d'erreur
+            $this->addFlash('danger', 'Le type de locatif n\'est pas activé !');
 
             return $this->redirectToRoute('app_home');
         }
@@ -161,7 +180,7 @@ class ReservationClientController extends AbstractController
             }
 
             // Vérification de si le locatif est disponible à ces dates (réservations)
-            $reservations = $rentalRepository->getReservationsByRental($rental->getId());
+            $reservations = $reservationRepository->getReservationsByRentalId($rental->getId());
             foreach ($reservations as $res) {
                 if (($dateStart >= $res->getDateStart()->setTime(0,0,0) && $dateStart <= $res->getDateEnd()->setTime(0,0,0)) || 
                     ($dateEnd >= $res->getDateStart()->setTime(0,0,0) && $dateEnd <= $res->getDateEnd()->setTime(0,0,0))) {

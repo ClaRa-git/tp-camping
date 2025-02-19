@@ -103,22 +103,11 @@ class ReservationRepository extends ServiceEntityRepository
 
         $qb = $entityManager->createQueryBuilder();
 
-        $query = $qb->select([
-            'r.id',
-            'r.dateStart',
-            'r.dateEnd',
-            'r.adultsNumber',
-            'r.kidsNumber',
-            'r.price',
-            'r.status',
-            'u.firstname',
-            'u.lastname',
-            'u.email'
-        ])
+        $query = $qb->select('r')
             ->from(Reservation::class, 'r')
-            ->leftJoin('r.user', 'u')
+            ->leftjoin('r.rental', 're')
             ->where('r.rental = :rentalId')
-            ->andWhere('r.status == 1')
+            ->andWhere('re.isActive = 1')
             ->setParameter('rentalId', $rentalId)
             ->getQuery();
         

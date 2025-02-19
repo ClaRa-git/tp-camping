@@ -98,7 +98,6 @@ DANS nnpm :
 - nnpm (rentrer dans le container)
 - npm install
 - npm i bootstrap
-- npm install sass-loader node-sass --save-dev
 - npm run build
 - puis on lance npm run watch
 

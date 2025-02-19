@@ -24,7 +24,7 @@ class HomeController extends AbstractController
         $title = "Bienvenue sur CampingFun !";
 
         // Récupérations des locations
-        $types = $typeRepository->findAll();
+        $types = $typeRepository->findAllActiveType();
 
         // Récupération des types actifs
         $typesAvailable = [];

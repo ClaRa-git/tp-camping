@@ -17,6 +17,24 @@ class TypeRepository extends ServiceEntityRepository
     }
 
     /**
+     * Méthode pour récupérer tous les types actifs
+     * @return array
+     */
+    public function findAllActiveType(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select('t')
+            ->from(Type::class, 't')
+            ->where('t.isActive = 1')
+            ->getQuery();
+        
+        return $query->getResult();
+    }
+
+    /**
      * Méthode pour sauvegarder un type
      * @param Type $type
      * @param bool $flush
@@ -71,6 +89,26 @@ class TypeRepository extends ServiceEntityRepository
             ->join('t.rentals', 'r')
             ->where('r.id = :rentalId')
             ->setParameter('rentalId', $rentalId)
+            ->getQuery();
+        
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * Méthode pour récupérer un type
+     * @param int $typeId
+     * @return Type
+     */
+    public function getType(int $typeId): Type
+    {
+        $entityManager = $this->getEntityManager();
+
+        $qb = $entityManager->createQueryBuilder();
+
+        $query = $qb->select('t')
+            ->from(Type::class, 't')
+            ->where('t.id = :typeId')
+            ->setParameter('typeId', $typeId)
             ->getQuery();
         
         return $query->getOneOrNullResult();
