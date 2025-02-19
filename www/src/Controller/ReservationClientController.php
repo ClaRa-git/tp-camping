@@ -86,8 +86,7 @@ class ReservationClientController extends AbstractController
         }
 
         // Vérification de l'activation du type
-        $idType = $rental->getType()->getId();
-        $type = $typeRepository->getType($idType);
+        $type = $typeRepository->getTypeForRental($rental->getId());
         if (!$type->isActive()) {
             // Message d'erreur
             $this->addFlash('danger', 'Le type de locatif n\'est pas activé !');

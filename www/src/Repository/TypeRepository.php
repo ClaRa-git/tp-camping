@@ -93,24 +93,4 @@ class TypeRepository extends ServiceEntityRepository
         
         return $query->getOneOrNullResult();
     }
-
-    /**
-     * Méthode pour récupérer un type
-     * @param int $typeId
-     * @return Type
-     */
-    public function getType(int $typeId): Type
-    {
-        $entityManager = $this->getEntityManager();
-
-        $qb = $entityManager->createQueryBuilder();
-
-        $query = $qb->select('t')
-            ->from(Type::class, 't')
-            ->where('t.id = :typeId')
-            ->setParameter('typeId', $typeId)
-            ->getQuery();
-        
-        return $query->getOneOrNullResult();
-    }
 }
