@@ -2,10 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Rental;
 use App\Entity\Reservation;
-use App\Entity\User;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

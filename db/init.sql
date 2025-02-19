@@ -31,7 +31,7 @@ CREATE TABLE `availability` (
   PRIMARY KEY (`id`),
   KEY `IDX_3FB7A2BFA7CF2329` (`rental_id`),
   CONSTRAINT `FK_3FB7A2BFA7CF2329` FOREIGN KEY (`rental_id`) REFERENCES `rental` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,8 @@ LOCK TABLES `availability` WRITE;
 /*!40000 ALTER TABLE `availability` DISABLE KEYS */;
 INSERT INTO `availability` VALUES
 (1,1,'2025-05-01 00:00:00','2025-05-10 23:59:59'),
-(2,2,'2025-06-05 00:00:00','2025-06-07 23:59:59');
+(2,2,'2025-06-05 00:00:00','2025-06-07 23:59:59'),
+(3,4,'2025-06-10 00:00:00','2025-06-15 23:59:59');
 /*!40000 ALTER TABLE `availability` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -264,7 +265,7 @@ CREATE TABLE `reservation` (
   KEY `IDX_42C84955A7CF2329` (`rental_id`),
   CONSTRAINT `FK_42C84955A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FK_42C84955A7CF2329` FOREIGN KEY (`rental_id`) REFERENCES `rental` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,7 +278,8 @@ INSERT INTO `reservation` VALUES
 (1,2,1,'2025-04-01 00:00:00','2025-04-30 00:00:00',2,0,24000,0),
 (2,2,1,'2025-05-15 00:00:00','2025-05-30 00:00:00',2,0,12800,1),
 (3,2,2,'2025-05-15 00:00:00','2025-05-30 00:00:00',2,0,19200,1),
-(4,2,2,'2025-05-07 00:00:00','2025-05-15 00:00:00',2,0,19200,1);
+(4,2,2,'2025-05-07 00:00:00','2025-05-15 00:00:00',2,0,19200,1),
+(5,3,4,'2025-06-15 00:00:00','2025-06-20 00:00:00',1,1,12000,1);
 /*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -365,7 +367,7 @@ CREATE TABLE `user` (
   `is_active` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_IDENTIFIER_EMAIL` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -376,7 +378,8 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES
 (1,'admin@admin.com','[\"ROLE_ADMIN\"]','$2y$13$YbXLKs.uoodvf5yPDMoz4.ui8pVZ46Q60ARd0RVkb4jJSgx5Cq6KG','Admin','Admin','administrateur',1),
-(2,'john@doe.com','[\"ROLE_USER\"]','$2y$13$aUPYRKnKs1XZkQlUC1VqcuXZnqOsVXmnBuSp498fA3GRenfmLcORe','John','Doe','johndoe',1);
+(2,'john@doe.com','[\"ROLE_USER\"]','$2y$13$aUPYRKnKs1XZkQlUC1VqcuXZnqOsVXmnBuSp498fA3GRenfmLcORe','John','Doe','johndoe',1),
+(3,'test@test.com','[\"ROLE_USER\"]','$2y$13$mw.ITV1ntu0D0f9h2saWdOOiYBzvQKcbvsdoxVr/c4bLcSTGNuXz6','Test','Test','Test',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -389,4 +392,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-02-19 11:59:32
+-- Dump completed on 2025-02-19 20:00:50

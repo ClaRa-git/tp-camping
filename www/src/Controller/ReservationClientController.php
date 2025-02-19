@@ -183,12 +183,8 @@ class ReservationClientController extends AbstractController
             foreach ($reservations as $res) {
                 if (($dateStart >= $res->getDateStart()->setTime(0,0,0) && $dateStart <= $res->getDateEnd()->setTime(0,0,0)) || 
                     ($dateEnd >= $res->getDateStart()->setTime(0,0,0) && $dateEnd <= $res->getDateEnd()->setTime(0,0,0)) ||
-                    ($dateStart <= $res->getDateStart()->setTime(0,0,0) && $dateEnd >= $res->getDateEnd()->setTime(0,0,0))) {
-                        // Message d'erreur
-                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
-                        
-                        return $this->redirectToRoute('app_reservation_client_new', ['id' => $id]);
-                    ) {
+                    ($dateStart <= $res->getDateStart()->setTime(0,0,0) && $dateEnd >= $res->getDateEnd()->setTime(0,0,0))) 
+                    {
                         // Message d'erreur
                         $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
                         

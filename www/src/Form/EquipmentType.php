@@ -3,9 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Equipment;
-use App\Entity\Rental;
-use Faker\Provider\ar_JO\Text;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
