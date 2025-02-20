@@ -18,7 +18,7 @@ class HomeController extends AbstractController
      * @return Response
      */
     #[Route('/', name: 'app_home')]
-    public function index( TypeRepository $typeRepository ): Response
+    public function index(TypeRepository $typeRepository): Response
     {
         // Titre de la page d'accueil
         $title = "Bienvenue sur CampingFun !";
@@ -26,17 +26,9 @@ class HomeController extends AbstractController
         // Récupérations des locations
         $types = $typeRepository->findAllActiveType();
 
-        // Récupération des types actifs
-        $typesAvailable = [];
-        foreach ($types as $type) {
-            if ($type->isActive()) {
-                $typesAvailable[] = $type;
-            }
-        }
-
         return $this->render('home/index.html.twig', [
             'title' => $title,
-            'types' => $typesAvailable
+            'types' => $types
         ]);
     }
 
@@ -49,7 +41,7 @@ class HomeController extends AbstractController
      * @return Response
      */
     #[Route('/detail/type/{id}', name: 'app_detail_type')]
-    public function detailType( TypeRepository $typeRepository, RentalRepository $rentalRepository, int $id ): Response
+    public function detailType(TypeRepository $typeRepository, RentalRepository $rentalRepository, int $id): Response
     {
         // Récupération du type
         $type = $typeRepository->find($id);
@@ -83,7 +75,7 @@ class HomeController extends AbstractController
      * @return Response
      */
     #[Route('/detail/rental/{id}', name: 'app_detail_rental')]
-    public function detailRental( RentalRepository $rentalRepository, int $id , EquipmentRepository $equipmentRepository): Response
+    public function detailRental(RentalRepository $rentalRepository, int $id, EquipmentRepository $equipmentRepository): Response
     {
         // Récupération de la location
         $rental = $rentalRepository->find($id);
@@ -111,6 +103,5 @@ class HomeController extends AbstractController
             'rental' => $rental,
             'type' => $type
         ]);
-    
     }
 }
