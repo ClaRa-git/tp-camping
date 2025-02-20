@@ -29,7 +29,7 @@ final class ReservationController extends AbstractController
      * @param ReservationRepository $reservationRepository
      * @return Response
      */
-    #[Route('/admin/reservation',name: 'app_reservation_index', methods: ['GET'])]
+    #[Route('/admin/reservation', name: 'app_reservation_index', methods: ['GET'])]
     public function index(ReservationRepository $reservationRepository): Response
     {
         // Récupération de toutes les réservations
@@ -51,7 +51,7 @@ final class ReservationController extends AbstractController
      * @return Response
      */
     #[Route('/admin/reservation/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, RentalRepository $rentalRepository, SeasonRepository $seasonRepository, AvailabilityRepository $availabilityRepository,EntityManagerInterface $entityManager): Response  
+    public function new(Request $request, RentalRepository $rentalRepository, SeasonRepository $seasonRepository, AvailabilityRepository $availabilityRepository, EntityManagerInterface $entityManager): Response
     {
         // Création d'une nouvelle réservation
         $reservation = new Reservation();
@@ -85,26 +85,27 @@ final class ReservationController extends AbstractController
 
             // vérification de si le camping est ouvert à ces dates
             foreach ($seasonsClosed as $season) {
-                if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateEnd()) ||  
-                ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateStart())) {
+                if (($dateStart >= $season->getDateStart() && $dateStart <= $season->getDateEnd()) ||
+                    ($dateEnd <= $season->getDateEnd()  && $dateEnd >= $season->getDateStart())
+                ) {
                     // Message d'erreur
                     $this->addFlash('danger', 'Le camping est fermé du ' . $season->getDateStart()->format('d/m/Y') . ' au ' . $season->getDateEnd()->format('d/m/Y') . ' !');
-                    
+
                     return $this->redirectToRoute('app_reservation_new');
                 }
             }
 
             // Vérification de si la date sélectionnée est supérieure à la date du jour
             $now = new \DateTime('now');
-            $now->setTime(0,0,0);
+            $now->setTime(0, 0, 0);
 
             // Mise à zéro de l'heure pour la comparaison pour éviter les problèmes d'heure
-            $dateSZT = $dateStart->setTime(0,0,0);
-            $dateEZT = $dateEnd->setTime(0,0,0);
+            $dateSZT = $dateStart->setTime(0, 0, 0);
+            $dateEZT = $dateEnd->setTime(0, 0, 0);
             if ($dateSZT < $now) {
                 // Message d'erreur
                 $this->addFlash('danger', 'La date de début doit être supérieure à la date du jour !');
-                
+
                 return $this->redirectToRoute('app_reservation_new');
             }
 
@@ -112,9 +113,9 @@ final class ReservationController extends AbstractController
             if ($dateEZT <= $dateSZT) {
                 // Message d'erreur
                 $this->addFlash('danger', 'La date de fin doit être supérieure à la date de début !');
-                
+
                 return $this->redirectToRoute('app_reservation_new');
-            }            
+            }
 
             // Vérification du nombre de personnes
             $nbAdults = $form->get('adultsNumber')->getData();
@@ -123,7 +124,7 @@ final class ReservationController extends AbstractController
             if ($nbAdults <= 0 || $nbKids < 0) {
                 // Message d'erreur
                 $this->addFlash('danger', 'Le nombre de personnes doit être supérieur à 0 pour les adultes et supérieur ou égal à 0 pour les enfants !');
-                
+
                 return $this->redirectToRoute('app_reservation_new');
             }
 
@@ -132,19 +133,20 @@ final class ReservationController extends AbstractController
             if ($nbPersons > $rental->getBedding()) {
                 // Message d'erreur
                 $this->addFlash('danger', 'Le nombre de personnes est supérieur à la capacité du locatif !');
-                
+
                 return $this->redirectToRoute('app_reservation_new');
             }
 
             // Vérification de si le locatif est disponible à ces dates (disponibilités)
-            if(!empty($availabilities)){
+            if (!empty($availabilities)) {
                 foreach ($availabilities as $availability) {
-                    if ((($dateStart >= $availability['dateStart']) && $dateStart <= $availability['dateEnd']) || 
-                        ($dateEnd >= $availability['dateStart'] && $dateEnd <= $availability['dateEnd'])) {
-                            // Message d'erreur
-                            $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
-                        
-                            return $this->redirectToRoute('app_reservation_new');
+                    if ((($dateStart >= $availability['dateStart']) && $dateStart <= $availability['dateEnd']) ||
+                        ($dateEnd >= $availability['dateStart'] && $dateEnd <= $availability['dateEnd'])
+                    ) {
+                        // Message d'erreur
+                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
+
+                        return $this->redirectToRoute('app_reservation_new');
                     }
                 }
             }
@@ -152,12 +154,13 @@ final class ReservationController extends AbstractController
             // Vérification de si le locatif est disponible à ces dates (réservations)
             $reservations = $rentalRepository->findReservationsByRental($rental->getId());
             foreach ($reservations as $res) {
-                if (($dateStart >= $res->getDateStart() && $dateStart <= $res->getDateEnd()) || 
-                    ($dateEnd >= $res->getDateStart() && $dateEnd <= $res->getDateEnd())) {
-                        // Message d'erreur
-                        $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
-                    
-                        return $this->redirectToRoute('app_reservation_new');
+                if (($dateStart >= $res->getDateStart() && $dateStart <= $res->getDateEnd()) ||
+                    ($dateEnd >= $res->getDateStart() && $dateEnd <= $res->getDateEnd())
+                ) {
+                    // Message d'erreur
+                    $this->addFlash('danger', 'Les dates sélectionnées ne sont pas disponibles !');
+
+                    return $this->redirectToRoute('app_reservation_new');
                 }
             }
 
@@ -290,7 +293,7 @@ final class ReservationController extends AbstractController
         }
 
         // Vérification du jeton CSRF
-        if ($this->isCsrfTokenValid('cancel'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('cancel' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
             // Annulation de la réservation
             $reservation->setStatus(self::STATUS_REFUSED);
             $entityManager->flush();
@@ -335,7 +338,7 @@ final class ReservationController extends AbstractController
         $date = new \DateTime('2025-05-15');
         $reservationStart = $reservationRepository->findByDateStart($date);
         $reservationEnd = $reservationRepository->findByDateEnd($date);
-    
+
         return new JsonResponse([
             'reservationsStart' => $reservationStart,
             'reservationsEnd' => $reservationEnd
@@ -377,7 +380,7 @@ final class ReservationController extends AbstractController
         $entityManager->flush();
 
         // Retourner la réponse avec un message de succès
-        return new JsonResponse(["message" => "Propreté mise à jour", "data" => $rental], 200);
+        return new JsonResponse(["message" => "Propreté mise à jour"], 200);
     }
 
     /**
@@ -391,8 +394,8 @@ final class ReservationController extends AbstractController
         $total = 0;
 
         // Mise à zéro de l'heure pour la comparaison pour éviter les problèmes d'heure
-        $dateStart = $reservation->getDateStart()->setTime(0,0,0);
-        $dateEnd = $reservation->getDateEnd()->setTime(0,0,0);
+        $dateStart = $reservation->getDateStart()->setTime(0, 0, 0);
+        $dateEnd = $reservation->getDateEnd()->setTime(0, 0, 0);
 
         // Récupération des saisons qui chevauchent la réservation
         $seasons = $seasonRepository->findSeasonsBetweenDates($dateStart, $dateEnd);
@@ -401,24 +404,21 @@ final class ReservationController extends AbstractController
         if (empty($seasons)) {
             $days = $dateStart->diff($dateEnd)->days + 1;
             $total = ($days * $reservation->getRental()->getType()->getPrice());
-        }
-        else
-        {
+        } else {
             foreach ($seasons as $season) {
                 // Détermination de la période de la saison qui chevauche la réservation
                 // Pour avoir le nombre de jours correct de la période mise du temps à 0
-                $start = $dateStart > $season->getDateStart()->setTime(0,0,0) ? $dateStart : $season->getDateStart()->setTime(0,0,0);
-                $end = $dateEnd < $season->getDateEnd()->setTime(0,0,0) ? $dateEnd : $season->getDateEnd()->setTime(0,0,0);
-    
+                $start = $dateStart > $season->getDateStart()->setTime(0, 0, 0) ? $dateStart : $season->getDateStart()->setTime(0, 0, 0);
+                $end = $dateEnd < $season->getDateEnd()->setTime(0, 0, 0) ? $dateEnd : $season->getDateEnd()->setTime(0, 0, 0);
+
                 // Calcul du nombre de jours de la période
                 $days = $start->diff($end)->days + 1;
-    
+
                 // Calcul du prix total de la réservation
-                $total += ($days * $season->getPercentage() * $reservation->getRental()->getType()->getPrice())/100;
+                $total += ($days * $season->getPercentage() * $reservation->getRental()->getType()->getPrice()) / 100;
             }
-    
         }
-        
+
         return $total;
     }
 }
