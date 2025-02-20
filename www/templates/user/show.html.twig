@@ -16,14 +16,15 @@
 		</div>
 	</div>
 
-	<div class="action-buttons">
+	<div
+		class="action-buttons">
 		{# Si l'utilisateur connecté est admin #}
 		{% if is_granted('ROLE_ADMIN') %}
 			<div>
 				{% if user.isActive %}
 					{{ include('user/_desactivate_form.html.twig') }}
 				{% else %}
-					{{ include('user/_active_form.html.twig') }}
+					{{ include('user/_activate_form.html.twig') }}
 				{% endif %}
 			</div>
 		{% endif %}
