@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            {% if (isCancelable) %}
+            {% if (isCancelable and reservation.status == 1) %}
                 <div class="action-buttons">
                     {% include "reservation/client/_cancel_form.html.twig" %}
                 </div>
